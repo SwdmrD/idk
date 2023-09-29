@@ -1,0 +1,47 @@
+{% extends 'catalog/pattern.html' %}
+
+{% block title %}
+Home
+{% endblock %}
+
+{% block extra_css %}
+  .container {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .row {
+    display: flex;
+  }
+
+  .col {
+    flex: 1;
+    padding: 20px;
+    border: 1px solid #ccc;
+    text-align: center;
+    margin: 10px;
+  }
+{% endblock %}
+
+{% block body %}
+<header>
+  <div class="container">
+        <div class="row">
+            <div class="col"><h1>Речі з історією</h1></div>
+        </div>
+        <div class="row">
+            <div class="col"><a class="p-2 text-dark" href="{% url 'lists' %}">Список товарів</a></div>
+            <div class="col"><a class="p-2 text-dark" href="#">Про нас</a></div>
+            <div class="col"><a class="p-2 text-dark" href="#">Контакти</a></div>
+             <div class="col"><a class="p-2 text-dark" href="{% url 'authr' %}">Увійти</a></div>
+        </div>
+  </div>
+</header>
+
+<h1>HOME</h1>
+<footer>
+
+  </footer>
+
+{% endblock %}
+

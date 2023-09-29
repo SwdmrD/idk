@@ -1,0 +1,90 @@
+{% extends 'catalog/pattern.html' %}
+{% block title %}
+Список товарів
+{% endblock %}
+{% block extra_css %}
+  .container {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .row {
+    display: flex;
+  }
+
+  .col {
+    flex: 1;
+    padding: 20px;
+    border: 1px solid #ccc;
+    text-align: center;
+    margin: 10px;
+  }
+    table, td, th {
+      border-collapse: collapse;
+      border: 3px solid #245488;
+    }
+    td, th {
+      padding: 5px 20px;
+      text-align: center;
+    }
+{% endblock %}
+{% block body %}
+ <div class="container">
+        <div class="row">
+            <div class="col"><a class="p-2 text-dark" href="{% url 'home' %}"><h1>Речі з історією</h1></a></div>
+        </div>
+        <div class="row">
+            <div class="col"><a class="p-2 text-dark" href="{% url 'lists' %}">Список товарів</a></div>
+            <div class="col"><a class="p-2 text-dark" href="#">Про нас</a></div>
+            <div class="col"><a class="p-2 text-dark" href="#">Контакти</a></div>
+             <div class="col"><a class="p-2 text-dark" href="{% url 'authr' %}">Увійти</a></div>
+        </div>
+  </div>
+<a href="{% url 'new_lists' %}">Додати об'єкт</a>
+<p>
+<table>
+    <thead>
+        <tr>
+             <th>ID</th>
+             <th>Тип</th>
+             <th>ID Розмір</th>
+             <th>Розмір</th>
+             <th>Колір</th>
+             <th>Бренд</th>
+             <th>Тканина</th>
+             <th>Опис</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for item in items %}
+        <tr>
+            <td>{{ item.id }}</td>
+            <td>{{ item.item_type }}</td>
+            <td>{{ item.item_color }}</td>
+            <td>{{ item.item_brand }}</td>
+            <td>{{ item.item_cloth }}</td>
+            <td>{{ item.item_text }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+<p>
+<a href="{% url 'new_size' %}">Додати об'єкт</a>
+<p>
+<table>
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Розмір</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for size in sizes %}
+        <tr>
+            <td>{{ size.id }}</td>
+            <td>{{ size.size }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}
