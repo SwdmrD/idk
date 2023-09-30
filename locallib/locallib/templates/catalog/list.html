@@ -13,6 +13,7 @@
   }
 
   .col {
+    background-color: rgb(229, 220, 232);
     flex: 1;
     padding: 20px;
     border: 1px solid #ccc;
@@ -26,6 +27,16 @@
     td, th {
       padding: 5px 20px;
       text-align: center;
+    background-color: rgb(229, 220, 232);
+    }
+    th{
+    background-color: rgb(59%, 58%, 86%);
+    }
+    body{
+    background-color: rgb(70%, 66%, 72%);
+    }
+    a {
+    color: rgb(10, 26, 84);
     }
 {% endblock %}
 {% block body %}
@@ -40,18 +51,19 @@
              <div class="col"><a class="p-2 text-dark" href="{% url 'authr' %}">Увійти</a></div>
         </div>
   </div>
-<a href="{% url 'new_lists' %}">Додати об'єкт</a>
+<a href="{% url 'new_lists' %}">Додати товар</a>
 <p>
+
 <table>
     <thead>
         <tr>
              <th>ID</th>
              <th>Тип</th>
-             <th>ID Розмір</th>
              <th>Розмір</th>
              <th>Колір</th>
              <th>Бренд</th>
              <th>Тканина</th>
+             <th>Стан</th>
              <th>Опис</th>
         </tr>
     </thead>
@@ -60,17 +72,23 @@
         <tr>
             <td>{{ item.id }}</td>
             <td>{{ item.item_type }}</td>
+            <td>{{ item.item_size }}</td>
             <td>{{ item.item_color }}</td>
             <td>{{ item.item_brand }}</td>
             <td>{{ item.item_cloth }}</td>
+            <td>{{ item.item_state }}/10</td>
             <td>{{ item.item_text }}</td>
+
         </tr>
         {% endfor %}
     </tbody>
 </table>
 <p>
-<a href="{% url 'new_size' %}">Додати об'єкт</a>
+<a href="{% url 'new_size' %}">Додати розмір</a>
 <p>
+
+
+
 <table>
     <thead>
         <tr>
@@ -83,6 +101,28 @@
         <tr>
             <td>{{ size.id }}</td>
             <td>{{ size.size }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<p>
+<a href="{% url 'new_state' %}">Додати стан</a>
+<a href="{% url 'edit_state/1/' %}">Додати товар</a>
+
+<p>
+<table>
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Стан</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for state in states %}
+        <tr>
+            <td>{{ state.id }}</td>
+            <td>{{ state.state }}</td>
         </tr>
         {% endfor %}
     </tbody>
