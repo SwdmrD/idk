@@ -51,11 +51,11 @@ class Item(models.Model):
     item_brand = models.CharField('Бренд', max_length=30)
     item_cloth = models.CharField('Тканина', max_length=30)
     item_text = models.CharField('Опис', max_length=100)
-    item_size = models.ForeignKey(Size, on_delete=models.CASCADE, related_name='items')
-    item_state = models.ForeignKey(State, on_delete=models.CASCADE, related_name='items')
+    item_size = models.ForeignKey(Size, on_delete=models.CASCADE, related_name='items', verbose_name='Розмір')
+    item_state = models.ForeignKey(State, on_delete=models.CASCADE, related_name='items', verbose_name='Стан')
 
     def __str__(self):
-        return f'{self.item_type} - {self.size} - {self.state}'
+        return f'{self.item_type} - {self.item_size} - {self.item_state}'
 
     class Meta:
         app_label = 'catalog'

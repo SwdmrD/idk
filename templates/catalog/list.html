@@ -65,6 +65,7 @@
              <th>Тканина</th>
              <th>Стан</th>
              <th>Опис</th>
+             <th>Дії</th>
         </tr>
     </thead>
     <tbody>
@@ -78,6 +79,8 @@
             <td>{{ item.item_cloth }}</td>
             <td>{{ item.item_state }}/10</td>
             <td>{{ item.item_text }}</td>
+            <td><p><a href="{% url 'edit_item' pk=item.id %}"> Edit</a><p>
+            <a href="{% url 'delete_item' pk=item.id %}"> Delete</a></td>
 
         </tr>
         {% endfor %}
@@ -94,6 +97,7 @@
         <tr>
             <th>ID</th>
             <th>Розмір</th>
+            <th>Дії</th>
         </tr>
     </thead>
     <tbody>
@@ -101,6 +105,8 @@
         <tr>
             <td>{{ size.id }}</td>
             <td>{{ size.size }}</td>
+            <td><p><a href="{% url 'edit_size' pk=size.id %}"> Edit</a><p>
+            <a href="{% url 'delete_size' pk=size.id %}"> Delete</a></td>
         </tr>
         {% endfor %}
     </tbody>
@@ -122,7 +128,8 @@
         <tr>
             <td>{{ state.id }}</td>
             <td>{{ state.state }}</td>
-            <td><a href={% url 'edit_state' pk=state.id %}>Edit</a></td>
+            <td><p><a href="{% url 'edit_state' pk=state.id %}"> Edit</a><p>
+            <a href="{% url 'delete_state' pk=state.id %}"> Delete</a></td>
         </tr>
         {% endfor %}
     </tbody>
