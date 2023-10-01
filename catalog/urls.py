@@ -4,7 +4,8 @@ from . import views
 
 urlpatterns = [
     path('', views.index, name='home'),
-    path('authorization/', views.auth, name='authr'),
+    path('search_items', views.search, name='search'),
+    path('filter_items/', views.result, name='filter_items'),
     path('items', views.list, name='lists'),
     path('items/new', views.CreateItemView.as_view(), name='new_lists'),
     path('size/new', views.CreateSizeView.as_view(), name='new_size'),
@@ -15,5 +16,6 @@ urlpatterns = [
     path('delete_item/<int:pk>/', views.DeleteItemView.as_view(), name='delete_item'),
     path('delete_size/<int:pk>/', views.DeleteSizeView.as_view(), name='delete_size'),
     path('delete_state/<int:pk>/', views.DeleteStateView.as_view(), name='delete_state'),
+
 
 ]

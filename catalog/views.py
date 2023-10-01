@@ -13,10 +13,23 @@ def index(request):
     return render(request, 'catalog/Home.html',
                   {'items': items, 'sizes': sizes, 'states': states})
 
+def search(request):
+    items = Item.objects.all()
+    sizes = Size.objects.all()
+    states = State.objects.all()
+    return render(request, 'catalog/search_list.html',{'items': items, 'sizes': sizes, 'states': states})
+def result(request):
+    size_id = request.GET.get('size')
+    state_id = request.GET.get('state')
 
-def auth(request):
-    return render(request, 'catalog/Authorization.html')
+    items = Item.objects.all()
 
+    if size_id:
+        items = items.filter(item_size_id=size_id)
+
+    if state_id:
+        items = items.filter(item_state_id=state_id)
+    return render(request, 'catalog/result.html', {'items': items})
 def list(request):
     items = Item.objects.all()
     sizes = Size.objects.all()
