@@ -108,14 +108,13 @@
 
 <p>
 <a href="{% url 'new_state' %}">Додати стан</a>
-<a href="{% url 'edit_state/1/' %}">Додати товар</a>
-
 <p>
 <table>
     <thead>
         <tr>
             <th>ID</th>
             <th>Стан</th>
+            <th>Дії</th>
         </tr>
     </thead>
     <tbody>
@@ -123,6 +122,7 @@
         <tr>
             <td>{{ state.id }}</td>
             <td>{{ state.state }}</td>
+            <td><a href={% url 'edit_state' pk=state.id %}>Edit</a></td>
         </tr>
         {% endfor %}
     </tbody>
