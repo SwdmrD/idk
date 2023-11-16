@@ -20,9 +20,14 @@
     text-align: center;
     margin: 10px;
   }
+    .cont {
+    width: 100%;
+    overflow: scroll;
+    }
     table, td, th {
       border-collapse: collapse;
       border: 3px solid #245488;
+
     }
     td, th {
       padding: 5px 20px;
@@ -46,92 +51,131 @@
         </div>
         <div class="row">
             <div class="col"><a class="p-2 text-dark" href="{% url 'lists' %}">Список товарів</a></div>
-            <div class="col"><a class="p-2 text-dark" href="{% url 'search' %}">Пошук товарів</a></div>
+            <div class="col"><a class="p-2 text-dark" href="{% url 'edit_request' %}">Редактор запитів</a></div>
             <div class="col"><a class="p-2 text-dark" href="#">Контакти</a></div>
              <div class="col"><a class="p-2 text-dark" href="#">Увійти</a></div>
         </div>
   </div>
-<a href="{% url 'new_lists' %}">Додати товар</a>
+<a href="{% url 'new_lists' %}">Додати товар</a> <hr>
+<a href="{% url 'new_supplier' %}">Додати постачальника</a><hr>
+<a href="{% url 'new_fabric' %}">Додати тканину</a><hr>
 <p>
-
+<div class="cont">
 <table>
     <thead>
         <tr>
              <th>ID</th>
              <th>Тип</th>
-             <th>Розмір</th>
-             <th>Колір</th>
              <th>Бренд</th>
+             <th>Розмір</th>
+             <th>Приналежність</th>
+             <th>Колір</th>
              <th>Тканина</th>
+             <th>Хімічна обробка</th>
              <th>Стан</th>
-             <th>Опис</th>
+             <th>Сеезонність</th>
+             <th>Ціна</th>
+             <th>Дата появи</th>
+             <th>Постачальник</th>
+             <th>Наявність</th>
              <th>Дії</th>
         </tr>
     </thead>
     <tbody>
         {% for item in items %}
         <tr>
-            <td>{{ item.id }}</td>
-            <td>{{ item.item_type }}</td>
-            <td>{{ item.item_size }}</td>
-            <td>{{ item.item_color }}</td>
-            <td>{{ item.item_brand }}</td>
-            <td>{{ item.item_cloth }}</td>
-            <td>{{ item.item_state }}/10</td>
-            <td>{{ item.item_text }}</td>
-            <td><p><a href="{% url 'edit_item' pk=item.id %}"> Edit</a><p>
-            <a href="{% url 'delete_item' pk=item.id %}"> Delete</a></td>
-
+            <td>{{ item.id_item }}</td>
+            <td>{{ item.type }}</td>
+            <td>{{ item.brand }}</td>
+            <td>{{ item.get_size_display }}</td>
+            <td>{{ item.get_gender_display }}</td>
+            <td>{{ item.get_color_display }}</td>
+            <td>{{ item.fabric }}</td>
+            <td>{{ item.get_chemical_treatment_display }}</td>
+            <td>{{ item.state }}</td>
+            <td>{{ item.get_seasonality_display }}</td>
+            <td>{{ item.price }} грн</td>
+            <td>{{ item.date_of_appearance }}</td>
+            <td>{{ item.supplier }}</td>
+            <td>{{ item.get_sold_or_not_display }}</td>
+            <td><a href="{% url 'edit_item' item.pk %}">Змінити</a>
+            <a href="{% url 'delete_item' item.pk %}">Видалити</a>
+            </td>
         </tr>
         {% endfor %}
     </tbody>
+
+
 </table>
+    </div>
 <p>
-<a href="{% url 'new_size' %}">Додати розмір</a>
-<p>
-
-
-
-<table>
+<div class="cont">
+    <table>
     <thead>
         <tr>
-            <th>ID</th>
-            <th>Розмір</th>
-            <th>Дії</th>
+             <th>ID</th>
+             <th>Назва компанії</th>
+             <th>Контактна персона</th>
+             <th>Телефон</th>
+             <th>Адреса(місто)</th>
+             <th>Пошта</th>
+             <th>Дії</th>
         </tr>
     </thead>
     <tbody>
-        {% for size in sizes %}
+        {% for supplier in suppliers %}
         <tr>
-            <td>{{ size.id }}</td>
-            <td>{{ size.size }}</td>
-            <td><p><a href="{% url 'edit_size' pk=size.id %}"> Edit</a><p>
-            <a href="{% url 'delete_size' pk=size.id %}"> Delete</a></td>
+            <td>{{ supplier.id_supplier }}</td>
+            <td>{{ supplier.company_name }}</td>
+            <td>{{ supplier.contact_person }}</td>
+            <td>{{ supplier.phone_number }}</td>
+            <td>{{ supplier.city }}</td>
+            <td>{{ supplier.email }}</td>
+            <td><a href="{% url 'edit_supplier' supplier.pk %}">Змінити</a>
+            <a href="{% url 'delete_supplier' supplier.pk %}">Видалити</a>
+            </td>
         </tr>
         {% endfor %}
     </tbody>
 </table>
-
+    </div>
 <p>
-<a href="{% url 'new_state' %}">Додати стан</a>
-<p>
-<table>
-    <thead>
+<div class="cont">
+    <table>
+        <thead>
         <tr>
             <th>ID</th>
-            <th>Стан</th>
+            <th>Назва тканини</th>
+            <th>Щільність</th>
+            <th>Еластичність</th>
+            <th>Повітропроникність</th>
+            <th>Текстура</th>
+            <th>Стійкість до стиснення</th>
+            <th>Стійкість кольору</th>
             <th>Дії</th>
         </tr>
     </thead>
+
     <tbody>
-        {% for state in states %}
+        {% for fabric in fabrics %}
         <tr>
-            <td>{{ state.id }}</td>
-            <td>{{ state.state }}</td>
-            <td><p><a href="{% url 'edit_state' pk=state.id %}"> Edit</a><p>
-            <a href="{% url 'delete_state' pk=state.id %}"> Delete</a></td>
+            <td>{{ fabric.id_fabric }}</td>
+            <td>{{ fabric.fabric_name }}</td>
+            <td>{{ fabric.get_destiny_display }}</td>
+            <td>{{ fabric.get_elasticity_display }}</td>
+            <td>{{ fabric.get_breathability_display }}</td>
+            <td>{{ fabric.get_surface_texture_display }}</td>
+            <td>{{ fabric.get_compression_resistance_display }}</td>
+            <td>{{ fabric.get_color_fastness_display }}</td>
+            <td><a href="{% url 'edit_fabric' fabric.pk %}">Змінити</a>
+            <a href="{% url 'delete_fabric' fabric.pk %}">Видалити</a>
+            </td>
         </tr>
         {% endfor %}
     </tbody>
 </table>
+</div>
+<p>
+
+
 {% endblock %}

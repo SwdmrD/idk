@@ -50,81 +50,15 @@ Home
         </div>
         <div class="row">
             <div class="col"><a class="p-2 text-dark" href="{% url 'lists' %}">Список товарів</a></div>
-            <div class="col"><a class="p-2 text-dark" href="{% url 'search' %}">Пошук товарів</a></div>
-            <div class="col"><a class="p-2 text-dark" href="#">Контакти</a></div>
-             <div class="col"><a class="p-2 text-dark" href="#">Увійти</a></div>
+            <div class="col"><a class="p-2 text-dark" href="{% url 'edit_request' %}">Редактор запитів</a></div>
+            <div class="col"><a class="p-2 text-dark" href="#">Пошук</a></div>
+            <div class="col"><a class="p-2 text-dark" href="{% url 'filtration' %}">Фільтрація</a></div>
+             <div class="col"><a class="p-2 text-dark" href="#">Статистика</a></div>
         </div>
   </div>
 </header>
     <h3>HOME</h3>
-    <button id="table1-btn">Таблиця з товарами</button>
-    <button id="table2-btn">Таблиця з розмірами</button>
-    <button id="table3-btn">Таблиця зі станами</button>
-<p>
-<table id="table1">
-   <thead>
-        <tr>
-             <th>ID</th>
-             <th>Тип</th>
-             <th>Розмір</th>
-             <th>Колір</th>
-             <th>Бренд</th>
-             <th>Тканина</th>
-             <th>Стан</th>
-             <th>Опис</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for item in items %}
-        <tr>
-            <td>{{ item.id }}</td>
-            <td>{{ item.item_type }}</td>
-            <td>{{ item.item_size }}</td>
-            <td>{{ item.item_color }}</td>
-            <td>{{ item.item_brand }}</td>
-            <td>{{ item.item_cloth }}</td>
-            <td>{{ item.item_state }}/10</td>
-            <td>{{ item.item_text }}</td>
-        </tr>
-        {% endfor %}
-    </tbody>
-</table>
-
-    <table id="table2" style="display: none;">
-    <thead>
-        <tr>
-            <th>ID</th>
-            <th>Розмір</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for size in sizes %}
-        <tr>
-            <td>{{ size.id }}</td>
-            <td>{{ size.size }}</td>
-        </tr>
-        {% endfor %}
-    </tbody>
-</table>
-
-<table id="table3" style="display: none;">
-    <thead>
-        <tr>
-            <th>ID</th>
-            <th>Стан</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for state in states %}
-        <tr>
-            <td>{{ state.id }}</td>
-            <td>{{ state.state }}</td>
-        </tr>
-        {% endfor %}
-    </tbody>
-</table>
-
-
+   <p>
 
 
 <footer>

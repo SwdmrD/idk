@@ -50,32 +50,29 @@
         </div>
         <div class="row">
             <div class="col"><a class="p-2 text-dark" href="{% url 'lists' %}">Список товарів</a></div>
-            <div class="col"><a class="p-2 text-dark" href="{% url 'search' %}">Пошук товарів</a></div>
-            <div class="col"><a class="p-2 text-dark" href="#">Контакти</a></div>
-             <div class="col"><a class="p-2 text-dark" href="#">Увійти</a></div>
+            <div class="col"><a class="p-2 text-dark" href="{% url 'edit_request' %}">Редактор запитів</a></div>
+            <div class="col"><a class="p-2 text-dark" href="#">Пошук</a></div>
+            <div class="col"><a class="p-2 text-dark" href="{% url 'filtration' %}">Фільтрація</a></div>
+             <div class="col"><a class="p-2 text-dark" href="#">Статистика</a></div>
         </div>
   </div>
 </header>
 
-<form method="GET" action="{% url 'filter_items' %}">
-    <label for="size">Розмір:</label>
-    <select name="size" id="size">
-        <option value="">Оберіть розмір</option>
-        {% for size in sizes %}
-            <option value="{{ size.id }}">{{ size.size }}</option>
-        {% endfor %}
-    </select>
-
-    <label for="state">Состояние:</label>
-    <select name="state" id="state">
-        <option value="">Оберіть стан</option>
-        {% for state in states %}
-            <option value="{{ state.id }}">{{ state.state }}</option>
-        {% endfor %}
-    </select>
-
-    <input type="submit" value="Шукати">
+<form method="get" action="{% url 'filter_products' %}">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Фильтровать</button>
 </form>
+
+{% if filtered_products %}
+    <ul>
+        {% for fabric in fabrics %}
+            <li>{{ fabric }}</li>
+        {% endfor %}
+    </ul>
+{% endif %}
+
+
 
 
 {% endblock %}

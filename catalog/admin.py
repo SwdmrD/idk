@@ -1,8 +1,8 @@
 from django.contrib import admin
-from .models import Item
-from .models import Size
-from .models import State
+from .models import Item, Fabric, Supplier, Customer, Receipt
 
 admin.site.register(Item)
-admin.site.register(Size)
-admin.site.register(State)
+admin.site.register(Fabric)
+admin.site.register(Supplier)
+admin.site.register(Customer)
+admin.site.register(Receipt)

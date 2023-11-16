@@ -41,7 +41,6 @@
     color: rgb(10, 26, 84);
     }
 {% endblock %}
-
 {% block body %}
  <div class="container">
         <div class="row">
@@ -49,23 +48,32 @@
         </div>
         <div class="row">
             <div class="col"><a class="p-2 text-dark" href="{% url 'lists' %}">Список товарів</a></div>
-            <div class="col"><a class="p-2 text-dark" href="{% url 'search' %}">Пошук товарів</a></div>
+            <div class="col"><a class="p-2 text-dark" href="{% url 'lists' %}">Пошук товарів</a></div>
             <div class="col"><a class="p-2 text-dark" href="#">Контакти</a></div>
              <div class="col"><a class="p-2 text-dark" href="#">Увійти</a></div>
         </div>
   </div>
-<ul>
-    {% for item in items %}
-        <li>{{ item }}</li>
-            <td>{{ item.item_type }}</td>,
-            <td>{{ item.item_size }}</td>,
-            <td>{{ item.item_color }}</td>,
-            <td>{{ item.item_brand }}</td>,
-            <td>{{ item.item_cloth }}</td>,
-            <td>{{ item.item_state }}/10</td>,
-            <td>{{ item.item_text }}</td>
-    {% empty %}
-        <li>Немає речей з такими параметрами.</li>
-    {% endfor %}
-</ul>
+
+  <div class="container">
+        <form method="get" action="{% url 'filter_products' %}">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit">Фільтрувати</button>
+        </form>
+
+        {% if filtered_products %}
+            <h2>Результати фільтрації:</h2>
+            <ul>
+                {% for product in filtered_products %}
+                    <li>{{ product }}</li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p>Немає результатів для вибраних параметрів.</p>
+        {% endif %}
+    </div>
+
+
+
+
 {% endblock %}
