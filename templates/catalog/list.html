@@ -6,14 +6,18 @@
 
 {% endblock %}
 {% block body %}
-<p></p>
 <button onclick="show1()">Товари</button>
 <button onclick="show2()">Постачальники</button>
 <button onclick="show3()">Тканини</button>
 
+<div><form method="POST">
+        {% csrf_token %} {{ sort_form.as_p }}
+<input type="submit" value="Сортувати"/></form></div>
+
 <p><a href="{% url 'new_lists' %}">Додати товар</a><p></p>
 <a href="{% url 'new_supplier' %}">Додати постачальника</a>
 <p><a href="{% url 'new_fabric' %}">Додати тканину</a>
+
 
 <div class="cont" id="table1" style="display: block">
 <table>
@@ -28,7 +32,7 @@
              <th>Тканина</th>
              <th>Хімічна обробка</th>
              <th>Стан</th>
-             <th>Сеезонність</th>
+             <th>Сезонність</th>
              <th>Ціна</th>
              <th>Дата появи</th>
              <th>Постачальник</th>

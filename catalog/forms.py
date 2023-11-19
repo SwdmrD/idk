@@ -243,3 +243,9 @@ class ItemFilterForm(forms.Form):
 
 class SQLQueryForm(forms.Form):
     sql_query = forms.CharField(initial='SELECT ', widget=forms.Textarea)
+
+
+
+class SortByForm(forms.Form):
+    is_reversed = forms.BooleanField(label='Зворотній порядок', required=False)
+    sort_by = forms.ChoiceField(label='Сортувати за', choices=[("price", "Price")])

@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from .models import Item, Fabric, Supplier, Customer, Receipt
-from .forms import FabricFilterForm, SupplierFilterForm, SupplierForm, ItemForm, ItemFilterForm, ItemForm2
+from .forms import FabricFilterForm, SupplierFilterForm, SupplierForm, ItemForm, ItemFilterForm, ItemForm2, SortByForm
 from django.db.models import Q, CharField
 from django.db.models.functions import Lower
 from django.views.generic.edit import UpdateView
@@ -42,7 +42,7 @@ def edit_request(request):
     else:
         form = SQLQueryForm()
 
-    return render(request, 'Catalog/Requests.html',
+    return render(request, 'catalog/Requests.html',
                   {'items': items, 'fabrics': fabrics, 'suppliers': suppliers, 'form': form,'result': result,
                    'error_message': error_message, 'column_names': column_names})
 
@@ -152,11 +152,19 @@ def list(request):
     suppliers = Supplier.objects.all()
     customers = Customer.objects.all()
     receipts = Receipt.objects.all()
+    
+    form = SortByForm(request.POST or None)
+    if request.method == "POST" and form.is_valid():
+        is_reversed = form.cleaned_data['is_reversed']
+        if form.cleaned_data['sort_by'] == 'price':
+            items = items.order_by(f'{"-" if is_reversed else "" }price')
+
     context = {'items': items,
                'fabrics': fabrics,
                'suppliers': suppliers,
                'customers': customers,
-               'receipts': receipts,}
+               'receipts': receipts,
+               'sort_form': form}
     return render(request, 'catalog/list.html', context)
 
 
