@@ -9,9 +9,69 @@
       <link rel="stylesheet" href="{% static 'styles.css' %}">
     <script type="text/javascript" src="{% static 'scripts.js' %}"></script>
     <title> {% block title %} {% endblock %}</title>
-    <style>{% block extra_css %} {% endblock %}</style>
+    <style>
+         .container {
+            display: flex;
+            flex-direction: column;
+            }
+
+          .row {
+            display: flex;
+          }
+
+          .col {
+            background-color: rgb(229, 220, 232);
+            flex: 1;
+            padding: 10px;
+            border: 1px solid #ccc;
+            text-align: center;
+            margin: 5px;
+          }
+ .cont {
+    width: 100%;
+    overflow-x: auto;
+    display: none;
+    }
+    table, td, th {
+      border-collapse: collapse;
+      border: 3px solid #245488;
+
+    }
+    td, th {
+      padding: 2px 10px;
+      text-align: center;
+    background-color: rgb(229, 220, 232);
+    }
+    th{
+    background-color: rgb(59%, 58%, 86%);
+    }
+    body{
+    background-color: rgb(70%, 66%, 72%);
+    }
+    a {
+    color: rgb(10, 26, 84);
+    }
+
+
+
+
+        {% block extra_css %} {% endblock %}</style>
 </head>
 <body>
+<header>
+<div class="container">
+        <div class="row">
+            <div class="col"style="padding: 0px"><a class="p-2 text-dark" href="{% url 'home' %}"><h1>Речі з історією</h1></a></div>
+        </div>
+        <div class="row">
+            <div class="col"><a class="p-2 text-dark" href="{% url 'lists' %}">Таблиці</a></div>
+            <div class="col"><a class="p-2 text-dark" href="{% url 'edit_request' %}">Редактор запитів</a></div>
+            <div class="col"><a class="p-2 text-dark" href="{% url 'search_item' %}">Пошук</a></div>
+            <div class="col"><a class="p-2 text-dark" href="{% url 'filtration_item' %}">Фільтрація</a></div>
+            <div class="col"><a class="p-2 text-dark" href="{% url 'statistics' %}">Статистика і звіти</a></div>
+        </div>
+  </div>
+</header>
 {% block body %} {% endblock %}
 </body>
 </html>

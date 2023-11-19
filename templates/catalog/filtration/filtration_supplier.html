@@ -1,0 +1,54 @@
+{% extends 'catalog/pattern.html' %}
+
+{% block title %}
+:)))
+{% endblock %}
+
+{% block extra_css %}
+ .cont {
+    display: block;
+    }
+{% endblock %}
+
+{% block body %}
+<p>
+ <div class="row">
+            <div class="col" style="border: 3px solid #ad70c2;"><a class="p-2 text-dark" href="{% url 'filtration_item' %}">Товари</a></div>
+            <div class="col" style="border: 3px solid #ad70c2;"><a class="p-2 text-dark" href="{% url 'filtration_supplier' %}">Постачальники</a></div>
+            <div class="col" style="border: 3px solid #ad70c2;"><a class="p-2 text-dark" href="{% url 'filtration_fabric' %}">Тканини</a></div>
+            <div class="col" style="border: 3px solid #ad70c2;"><a class="p-2 text-dark" href="#">Клієнти</a></div>
+            <div class="col" style="border: 3px solid #ad70c2;"><a class="p-2 text-dark" href="#">Чеки</a></div>
+            </div>
+
+<div class="cont">
+    <div class="row">
+        <div class="col" style="text-align: start; margin: 10px; padding: 10px;">
+            <a class="p-2 text-dark">
+                <form method="get" action="{% url 'filtration_supplier' %}">
+                    {% csrf_token %}
+                    {{ form.as_p }}
+                    <button type="submit">Фільтрувати</button>
+                </form>
+            </a>
+        </div>
+        <div class="col" style="text-align: start; margin: 10px; padding: 10px;">
+            <a class="p-2 text-dark">
+                {% if filtered_suppliers %}
+                    <ul>
+                        {% for supplier in filtered_suppliers %}
+                            <li>{{ supplier }}</li>
+                        {% endfor %}
+                    </ul>
+                {% endif %}
+            </a>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+
+{% endblock %}
+

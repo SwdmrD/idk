@@ -1,4 +1,21 @@
 from django.db import models
+from django.core.validators import RegexValidator
+
+
+name_regex = r'^[А-ЩЬЮЯҐЄІЇа-щьюяґєії\'\s]+$'
+name_validator = RegexValidator(
+    regex=name_regex,
+    message="Використовуйте українську мову.",
+    code='invalid_name'
+)
+
+phone_regex = r"^\+380 \d{2}-\d{3}-\d{2}-\d{2}$"
+phone_validator = RegexValidator(
+    regex=phone_regex,
+    message="Номер телефона повинен бути у форматі: '+380 12-345-67-89'.",
+    code='invalid_phone_number'
+)
+
 
 
 class Fabric(models.Model):
@@ -52,7 +69,7 @@ class Fabric(models.Model):
         ('unknown', 'Невідомо')
     )
     id_fabric = models.AutoField(primary_key=True)
-    fabric_name = models.CharField('Назва тканини', max_length=30)
+    fabric_name = models.CharField('Назва тканини', validators=[name_validator], unique=True, max_length=30)
     destiny = models.CharField('Щільність', max_length=30, choices=DESTINY)
     elasticity = models.CharField('Еластичність', max_length=30, choices=ELASTICITY)
     breathability = models.CharField('Повітропроникність', max_length=30, choices=BREATHABILITY)
@@ -69,12 +86,18 @@ class Fabric(models.Model):
 
 class Supplier(models.Model):
     id_supplier = models.AutoField(primary_key=True)
-    company_name = models.CharField('Назва компанії', max_length=50)
-    contact_person_name = models.CharField('Ім\'я контактної персони', max_length=50)
-    contact_person_surname = models.CharField('Прізвище контактної персони', max_length=50)
-    phone_number = models.CharField('Телефон', max_length=16)
-    city = models.CharField('Місто', max_length=50)
-    email = models.EmailField('Пошта', max_length=100)
+    company_name = models.CharField('Назва компанії',unique=True, max_length=50)
+    contact_person_name = models.CharField('Ім\'я контактної персони', validators=[name_validator], max_length=50)
+    contact_person_surname = models.CharField('Прізвище контактної персони',validators=[name_validator], max_length=50)
+    phone_number = models.CharField('Телефон', validators=[phone_validator], unique=True, max_length=17)
+    city = models.CharField('Місто', validators=[name_validator], max_length=50)
+    email = models.EmailField('Пошта', unique=True, max_length=100)
+
+    def save(self, *args, **kwargs):
+        self.contact_person_name = self.contact_person_name.capitalize()
+        self.contact_person_surname = self.contact_person_surname.capitalize()
+        self.city = self.city.capitalize()
+        super().save(*args, **kwargs)
 
     def __str__(self):
         return self.company_name
@@ -128,7 +151,7 @@ class Item(models.Model):
         ('s', 'S'),
         ('m', 'M'),
         ('l', 'L'),
-        ('xl', 'XXL'),
+        ('xl', 'XL'),
         ('xxl', 'XXL')
     )
     TREATMENT = (
@@ -165,14 +188,16 @@ class Item(models.Model):
         ('multicolored', 'Різнокольоровий'),
         ('print', 'Принт'),
     )
-    CHOICE = (
-        ('true', 'Так'),
-        ('false', 'Ні')
-    )
     GENDER = (
         ('female', 'Жіночій'),
         ('male', 'Чоловічий'),
         ('unisex', 'Унісекс')
+    )
+    STATE = (
+        ('significant defects', 'Є значні дефекти'),
+        ('minor defects', 'Є незначні дефекти'),
+        ('slightly worn', 'Трішки ношений'),
+        ('new', 'Новий'),
     )
     id_item = models.AutoField(primary_key=True)
     supplier = models.ForeignKey(Supplier, on_delete=models.SET_NULL, null=True, verbose_name='Постачальник')
@@ -180,14 +205,18 @@ class Item(models.Model):
     type = models.CharField('Тип', max_length=30)
     brand = models.CharField('Бренд', max_length=30)
     size = models.CharField('Розмір', max_length=30,choices=SIZE)
-    gender = models.CharField('Приналежність', max_length=30,choices=GENDER)
-    color = models.CharField('Колір', max_length=30,choices=COLOR)
+    gender = models.CharField('Приналежність', max_length=30, choices=GENDER)
+    color = models.CharField('Колір', max_length=30, choices=COLOR)
     chemical_treatment = models.CharField('Хімічна обробка', max_length=100, choices=TREATMENT)
-    state = models.CharField('Стан', max_length=100)
     seasonality = models.CharField('Сезонність', max_length=100, choices=SEASONALITY)
+    state = models.CharField('Стан', max_length=100, choices=STATE)
     price = models.FloatField('Ціна')
-    date_of_appearance = models.DateTimeField("Дата появи товару")
-    sold_or_not = models.CharField('Наявність', choices=CHOICE,  max_length=10, default=False)
+    date_of_appearance = models.DateField("Дата появи товару")
+
+    def save(self, *args, **kwargs):
+        self.type = self.type.capitalize()
+        super().save(*args, **kwargs)
+
 
     def __str__(self):
         return f'{self.type} - {self.supplier} - {self. fabric}'

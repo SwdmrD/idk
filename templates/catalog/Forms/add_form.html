@@ -1,65 +1,20 @@
 {% extends 'catalog/pattern.html' %}
 {% block extra_css %}
-  .container {
-    display: flex;
-    flex-direction: column;
-  }
-
-  .row {
-    display: flex;
-  }
-
-  .col {
-    background-color: rgb(229, 220, 232);
-    flex: 1;
-    padding: 20px;
-    border: 1px solid #ccc;
-    text-align: center;
-    margin: 10px;
-  }
-     td{
-      border-collapse: collapse;
-      border: 3px solid #245488;
-    }
-    td{
-      padding: 5px 20px;
-      text-align: center;
-    background-color: rgb(229, 220, 232);
-    }
-    th{
-    background-color: rgb(59%, 58%, 86%);
-    }
-    body{
-    background-color: rgb(70%, 66%, 72%);
-    }
-    a {
-    color: rgb(10, 26, 84);
-    }
     form{
     margin-left: 10px
     }
 {% endblock %}
 {% block title %}
-New Item
+Створення
 {% endblock %}
 
 {% block body %}
- <div class="container">
-        <div class="row">
-            <div class="col"><a class="p-2 text-dark" href="{% url 'home' %}"><h1>Речі з історією</h1></a></div>
-        </div>
-        <div class="row">
-            <div class="col"><a class="p-2 text-dark" href="{% url 'lists' %}">Список товарів</a></div>
-            <div class="col"><a class="p-2 text-dark" href="{% url 'edit_request' %}">Пошук товарів</a></div>
-            <div class="col"><a class="p-2 text-dark" href="#">Контакти</a></div>
-             <div class="col"><a class="p-2 text-dark" href="#">Увійти</a></div>
-        </div>
-  </div>
 <form method="post">{% csrf_token %}
     {{ form.as_p }}
     <input type="submit" value="Зберегти">
        <a href="{% url 'lists' %}">
     <button type="button">Повернутись до списку</button></a>
 </form>
+
 {% endblock %}
 
