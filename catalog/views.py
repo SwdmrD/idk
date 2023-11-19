@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from .models import Item, Fabric, Supplier, Customer, Receipt
-from .forms import FabricFilterForm, SupplierFilterForm, SupplierForm, ItemForm, ItemFilterForm, ItemForm2
+from .forms import FabricFilterForm, SupplierFilterForm, SupplierForm, ItemForm, ItemFilterForm, ItemForm2, SortByForm
 from django.db.models import Q, CharField
 from django.db.models.functions import Lower
 from django.views.generic.edit import UpdateView
@@ -9,7 +9,6 @@ from django.views.generic import DeleteView
 from django.db import connection
 from .forms import SQLQueryForm
 from django.db.utils import OperationalError
-from django.db.models import Count, Avg
 
 
 def home(request):
@@ -19,7 +18,8 @@ def home(request):
     customers = Customer.objects.all()
     receipts = Receipt.objects.all()
     return render(request, 'catalog/Home.html',
-                  {'items': items, 'fabrics': fabrics, 'suppliers': suppliers, 'customers': customers, 'receipts': receipts})
+                  {'items': items, 'fabrics': fabrics, 'suppliers': suppliers, 'customers': customers,
+                   'receipts': receipts})
 
 
 def edit_request(request):
@@ -43,8 +43,8 @@ def edit_request(request):
     else:
         form = SQLQueryForm()
 
-    return render(request, 'Catalog/Requests.html',
-                  {'items': items, 'fabrics': fabrics, 'suppliers': suppliers, 'form': form,'result': result,
+    return render(request, 'catalog/Requests.html',
+                  {'items': items, 'fabrics': fabrics, 'suppliers': suppliers, 'form': form, 'result': result,
                    'error_message': error_message, 'column_names': column_names})
 
 
@@ -74,7 +74,8 @@ def filters_fabric(request):
     else:
         filtered_fabrics = Fabric.objects.all()
         form = FabricFilterForm()
-    return render(request, 'catalog/filtration/filtration_fabric.html', {'form': form, 'filtered_fabrics': filtered_fabrics})
+    return render(request, 'catalog/filtration/filtration_fabric.html',
+                  {'form': form, 'filtered_fabrics': filtered_fabrics})
 
 
 def filters_item(request):
@@ -144,7 +145,8 @@ def filters_supplier(request):
     else:
         filtered_suppliers = Supplier.objects.all()
         form = SupplierFilterForm()
-    return render(request, 'catalog/filtration/filtration_supplier.html', {'form': form, 'filtered_suppliers': filtered_suppliers})
+    return render(request, 'catalog/filtration/filtration_supplier.html',
+                  {'form': form, 'filtered_suppliers': filtered_suppliers})
 
 
 def list(request):
@@ -153,11 +155,19 @@ def list(request):
     suppliers = Supplier.objects.all()
     customers = Customer.objects.all()
     receipts = Receipt.objects.all()
+
+    form = SortByForm(request.POST or None)
+    if request.method == "POST" and form.is_valid():
+        is_reversed = form.cleaned_data['is_reversed']
+        if form.cleaned_data['sort_by'] == 'price':
+            items = items.order_by(f'{"-" if is_reversed else ""}price')
+
     context = {'items': items,
                'fabrics': fabrics,
                'suppliers': suppliers,
                'customers': customers,
-               'receipts': receipts,}
+               'receipts': receipts,
+               'sort_form': form}
     return render(request, 'catalog/list.html', context)
 
 
@@ -210,13 +220,13 @@ def search_supplier(request):
         )
     return render(request, 'catalog/search/search_supplier.html', {'suppliers': suppliers})
 
+
 def statistics(request):
     items = Item.objects.all()
     fabrics = Fabric.objects.all()
     suppliers = Supplier.objects.all()
     customers = Customer.objects.all()
     receipts = Receipt.objects.all()
-
     return render(request, 'catalog/Statistics.html',
                   {'items': items, 'fabrics': fabrics, 'suppliers': suppliers, 'customers': customers,
                    'receipts': receipts})
@@ -242,7 +252,7 @@ class DeleteItemView(DeleteView):
     success_url = "/items"
 
 
-class CreateCustomerView(CreateView): #клієнти
+class CreateCustomerView(CreateView):  # клієнти
     model = Customer
     template_name = "catalog/Forms/add_form.html"
     fields = "__all__"
@@ -262,7 +272,7 @@ class DeleteCustomerView(DeleteView):
     success_url = "/items"
 
 
-class CreateFabricView(CreateView): #тканина
+class CreateFabricView(CreateView):  # тканина
     model = Fabric
     template_name = "catalog/Forms/add_form.html"
     fields = "__all__"
@@ -282,7 +292,7 @@ class DeleteFabricView(DeleteView):
     success_url = "/items"
 
 
-class CreateSupplierView(CreateView): #постачальник
+class CreateSupplierView(CreateView):  # постачальник
     model = Supplier
     template_name = "catalog/Forms/add_form.html"
     form_class = SupplierForm
@@ -302,7 +312,7 @@ class DeleteSupplierView(DeleteView):
     success_url = "/items"
 
 
-class CreateReceiptView(CreateView):  #Чеки
+class CreateReceiptView(CreateView):  # Чеки
     model = Receipt
     template_name = "catalog/Forms/add_form.html"
     fields = "__all__"
@@ -320,4 +330,3 @@ class DeleteReceiptView(DeleteView):
     model = Receipt
     template_name = "catalog/Forms/delete_form.html"
     success_url = "/items"
-
