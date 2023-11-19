@@ -9,6 +9,7 @@ from django.views.generic import DeleteView
 from django.db import connection
 from .forms import SQLQueryForm
 from django.db.utils import OperationalError
+from django.db.models import Count, Avg
 
 
 def home(request):
@@ -215,6 +216,7 @@ def statistics(request):
     suppliers = Supplier.objects.all()
     customers = Customer.objects.all()
     receipts = Receipt.objects.all()
+
     return render(request, 'catalog/Statistics.html',
                   {'items': items, 'fabrics': fabrics, 'suppliers': suppliers, 'customers': customers,
                    'receipts': receipts})
