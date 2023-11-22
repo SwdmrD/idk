@@ -1,0 +1,68 @@
+{% extends 'catalog/pattern.html' %}
+{% block title %}
+Список товарів
+{% endblock %}
+{% block extra_css %}
+
+{% endblock %}
+{% block body %}
+<div class="row">
+            <div class="col" style="border: 3px solid #ad70c2;"><a class="p-2 text-dark" href="{% url 'lists_item' %}">Товари</a></div>
+            <div class="col" style="border: 3px solid #ad70c2;"><a class="p-2 text-dark" href="{% url 'lists_supplier' %}">Постачальники</a></div>
+            <div class="col" style="border: 3px solid #ad70c2;"><a class="p-2 text-dark" href="{% url 'lists_fabric' %}">Тканини</a></div>
+            <div class="col" style="border: 3px solid #ad70c2;"><a class="p-2 text-dark" href="#">Клієнти</a></div>
+            <div class="col" style="border: 3px solid #ad70c2;"><a class="p-2 text-dark" href="#">Чеки</a></div>
+            </div>
+<p></p>
+
+<div><form method="POST">
+        {% csrf_token %} {{ sort_form.as_p }}
+<input type="submit" value="Сортувати"/></form></div>
+<p><a href="{% url 'new_lists' %}">Додати товар</a>
+
+<div class="cont">
+<table>
+    <thead>
+        <tr>
+             <th>ID</th>
+             <th>Тип</th>
+             <th>Бренд</th>
+             <th>Розмір</th>
+             <th>Приналежність</th>
+             <th>Колір</th>
+             <th>Тканина</th>
+             <th>Хімічна обробка</th>
+             <th>Стан</th>
+             <th>Сезонність</th>
+             <th>Ціна</th>
+             <th>Дата появи</th>
+             <th>Постачальник</th>
+             <th>Дії</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for item in items %}
+        <tr>
+            <td>{{ item.id_item }}</td>
+            <td>{{ item.type }}</td>
+            <td>{{ item.brand }}</td>
+            <td>{{ item.get_size_display }}</td>
+            <td>{{ item.get_gender_display }}</td>
+            <td>{{ item.get_color_display }}</td>
+            <td>{{ item.fabric }}</td>
+            <td>{{ item.get_chemical_treatment_display }}</td>
+            <td>{{ item.get_state_display }}</td>
+            <td>{{ item.get_seasonality_display }}</td>
+            <td>{{ item.price }} грн</td>
+            <td>{{ item.date_of_appearance }}</td>
+            <td>{{ item.supplier }}</td>
+            <td><a href="{% url 'edit_item' item.pk %}">Змінити</a>
+            <a href="{% url 'delete_item' item.pk %}">Видалити</a>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</p>
+</table>
+    </div>
+{% endblock %}

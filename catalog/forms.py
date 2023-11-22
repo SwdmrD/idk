@@ -17,7 +17,7 @@ class ItemForm(ModelForm):
         price = self.cleaned_data.get('price')
         if price and (price < 0 or price > 5000):
             raise ValidationError('Неправильна ціна, можливий діапазон від 0 до 5000')
-        return price
+        return round(price, 2)
 
     def clean_date_of_appearance(self):
         date_of_appearance = self.cleaned_data.get('date_of_appearance')
@@ -37,7 +37,7 @@ class ItemForm2(ModelForm):
         price = self.cleaned_data.get('price')
         if price and (price < 0 or price > 5000):
             raise ValidationError('Неправильна ціна, можливий діапазон від 0 до 5000')
-        return price
+        return round(price, 2)
 
     def filter_by_price(data, price_ranges):
         filtered_data = []
@@ -157,21 +157,6 @@ class SupplierFilterForm(forms.Form):
     )
 
 
-price_choices = [
-    ('0-400', '0-400'),
-    ('400-800', '400-800'),
-    ('800-1200', '800-1200'),
-    ('1200-1600', '1200-1600'),
-    ('2000-2400', '2000-2400'),
-    ('2400-2800', '2400-2800'),
-    ('2800-3200', '2800-3200'),
-    ('3200-3600', '3200-3600'),
-    ('3600-4000', '3600-4000'),
-    ('4000-4400', '4000-4400'),
-    ('4400-4800', '4400-4800'),
-    ('4800-5000', '4800-5000')]
-
-
 class ItemFilterForm(forms.Form):
     brand = forms.MultipleChoiceField(
         label='Бренд',
@@ -221,10 +206,12 @@ class ItemFilterForm(forms.Form):
         widget=forms.CheckboxSelectMultiple,
         required=False
     )
-    price = forms.MultipleChoiceField(
-        label='Ціна',
-        choices=price_choices,
-        widget=forms.CheckboxSelectMultiple,
+    min_price = forms.FloatField(
+        label='Мінімальна ціна',
+        required=False
+    )
+    max_price = forms.FloatField(
+        label='Максимальна ціна',
         required=False
     )
     date_of_appearance = forms.MultipleChoiceField(
@@ -246,6 +233,45 @@ class SQLQueryForm(forms.Form):
 
 
 
-class SortByForm(forms.Form):
+class SortByItem(forms.Form):
     is_reversed = forms.BooleanField(label='Зворотній порядок', required=False)
-    sort_by = forms.ChoiceField(label='Сортувати за', choices=[("price", "Price")])
+    sort_by = forms.ChoiceField(label='Сортувати за', choices=[
+        ("id_item", "ID"),
+        ("type", "Тип"),
+        ("brand", "Бренд"),
+        ("size", "Розмір"),
+        ("gender", "Приналежність"),
+        ("color", "Колір"),
+        ("fabric", "Тканина"),
+        ("chemical_treatment", "Хімічна обробка"),
+        ("state", "Стан"),
+        ("seasonality", "Сезонність"),
+        ("price", "Ціна"),
+        ("date_of_appearance", "Дата появи"),
+        ("supplier", "Постачальник")])
+
+
+class SortBySupplier(forms.Form):
+    is_reversed = forms.BooleanField(label='Зворотній порядок', required=False)
+    sort_by = forms.ChoiceField(label='Сортувати за', choices=[
+        ("id_supplier", "ID"),
+        ("company_name", "Назва компанії"),
+        ("contact_person_name", "Ім\'я контактної персони"),
+        ("contact_person_surname", "Прізвище контактної персони"),
+        ("phone_number", "Телефон"),
+        ("city", "Місто"),
+        ("email", "Пошта")])
+
+
+class SortByFabric(forms.Form):
+    is_reversed = forms.BooleanField(label='Зворотній порядок', required=False)
+    sort_by = forms.ChoiceField(label='Сортувати за', choices=[
+        ("id_fabric", "ID"),
+        ("fabric_name", "Назва тканини"),
+        ("destiny", "Щільність"),
+        ("elasticity", "Еластичність"),
+        ("breathability", "Повітропроникність"),
+        ("surface_texture", "Текстура"),
+        ("compression_resistance", "Стійкість до стиснення"),
+        ("color_fastness", "Стійкість кольору")])
+

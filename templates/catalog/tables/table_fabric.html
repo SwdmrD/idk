@@ -1,0 +1,61 @@
+{% extends 'catalog/pattern.html' %}
+{% block title %}
+Список товарів
+{% endblock %}
+{% block extra_css %}
+
+{% endblock %}
+{% block body %}
+<div class="row">
+            <div class="col" style="border: 3px solid #ad70c2;"><a class="p-2 text-dark" href="{% url 'lists_item' %}">Товари</a></div>
+            <div class="col" style="border: 3px solid #ad70c2;"><a class="p-2 text-dark" href="{% url 'lists_supplier' %}">Постачальники</a></div>
+            <div class="col" style="border: 3px solid #ad70c2;"><a class="p-2 text-dark" href="{% url 'lists_fabric' %}">Тканини</a></div>
+            <div class="col" style="border: 3px solid #ad70c2;"><a class="p-2 text-dark" href="#">Клієнти</a></div>
+            <div class="col" style="border: 3px solid #ad70c2;"><a class="p-2 text-dark" href="#">Чеки</a></div>
+            </div>
+
+<p></p>
+<div><form method="POST">
+        {% csrf_token %} {{ sort_form.as_p }}
+<input type="submit" value="Сортувати"/></form></div>
+
+<p><a href="{% url 'new_fabric' %}">Додати тканину</a>
+
+<div class="cont">
+
+    <table>
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>Назва тканини</th>
+            <th>Щільність</th>
+            <th>Еластичність</th>
+            <th>Повітропроникність</th>
+            <th>Текстура</th>
+            <th>Стійкість до стиснення</th>
+            <th>Стійкість кольору</th>
+            <th>Дії</th>
+        </tr>
+    </thead>
+
+    <tbody>
+        {% for fabric in fabrics %}
+        <tr>
+            <td>{{ fabric.id_fabric }}</td>
+            <td>{{ fabric.fabric_name }}</td>
+            <td>{{ fabric.get_destiny_display }}</td>
+            <td>{{ fabric.get_elasticity_display }}</td>
+            <td>{{ fabric.get_breathability_display }}</td>
+            <td>{{ fabric.get_surface_texture_display }}</td>
+            <td>{{ fabric.get_compression_resistance_display }}</td>
+            <td>{{ fabric.get_color_fastness_display }}</td>
+            <td><a href="{% url 'edit_fabric' fabric.pk %}">Змінити</a>
+            <a href="{% url 'delete_fabric' fabric.pk %}">Видалити</a>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+</div>
+
+{% endblock %}

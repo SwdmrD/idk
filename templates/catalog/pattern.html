@@ -30,7 +30,6 @@
  .cont {
     width: 100%;
     overflow-x: auto;
-    display: none;
     }
     table, td, th {
       border-collapse: collapse;
@@ -64,7 +63,7 @@
             <div class="col"style="padding: 0px"><a class="p-2 text-dark" href="{% url 'home' %}"><h1>Речі з історією</h1></a></div>
         </div>
         <div class="row">
-            <div class="col"><a class="p-2 text-dark" href="{% url 'lists' %}">Таблиці</a></div>
+            <div class="col"><a class="p-2 text-dark" href="{% url 'lists_item' %}">Таблиці</a></div>
             <div class="col"><a class="p-2 text-dark" href="{% url 'edit_request' %}">Редактор запитів</a></div>
             <div class="col"><a class="p-2 text-dark" href="{% url 'search_item' %}">Пошук</a></div>
             <div class="col"><a class="p-2 text-dark" href="{% url 'filtration_item' %}">Фільтрація</a></div>

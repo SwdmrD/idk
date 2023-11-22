@@ -1,0 +1,29 @@
+{% extends 'catalog/pattern.html' %}
+
+{% block title %}
+:))
+{% endblock %}
+
+{% block extra_css %}
+{% endblock %}
+{% block body %}
+<ul>
+    <h2>Оберіть компанію:</h2>
+{% for supplier in suppliers %}
+
+    <li> <b>Постачальник:</b>
+        {{ supplier.company_name }}
+        {{ supplier.contact_person_name }}
+        {{ supplier.contact_person_surname }},
+        {{ supplier.city }},
+        {{ supplier.phone_number }},
+        {{ supplier.email }}
+        <p>
+        <a href="{% url 'generate_pdf' supplier.pk %}">Завантажити документ цієї компанії</a></p>
+        <hr>
+
+
+        {% endfor %}
+    </li>
+</ul>
+{% endblock %}

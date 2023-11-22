@@ -7,24 +7,149 @@
 {% block extra_css %}
 {% endblock %}
 {% block body %}
-Вещи:
+<h2>Звіти</h2>
+<ul>
+    <li><a href="{% url 'choose_a_company' %}">Звіт 1 - договір про співробітництво(партнерство)</a></li>
+    <li><a href="{% url 'choose_a_company' %}">Звіт 2</a></li>
+</ul>
+<h2>Статистика товарів</h2>
 
-Средняя цена вещей каждого бренда.
-Количество вещей каждого бренда.
-Количество вещей каждого размера.
-Количество вещей каждого цвета.
-Количество вещей для каждого пола.
-Количество вещей для каждого сезона.
-Количество вещей в каждом состоянии.
-Поставщики:
+<h3>Середня ціна всіх речей</h3>
+<ul>
+    <li>{{ average_price|floatformat:2 }} грн</li>
+</ul>
+<h3>Загальна ціна всіх речей</h3>
+<ul>
+    <li>{{ total_price }} грн</li>
+</ul>
+<h3>Кількість всіх речей</h3>
 
-Количество поставщиков.
-Количество вещей, поставляемых каждым поставщиком.
-Средняя цена вещей у каждого поставщика.
+<ul>
+    <li>{{ count_all }}</li>
+</ul>
 
-Ткань:
-Количество различных видов ткани.
-по каждому качеству пройтись
-Статистика №1
-Средняя цена вещей каждого типа.
+<h3>Середня ціна речей кожного бренду</h3>
+<ul>
+{% for item in average_price_per_brand %}
+    <li>{{ item.brand }}: {{ item.average_price|floatformat:2 }} грн</li>
+{% endfor %}
+</ul>
+<h3>Кількість речей кожного бренду</h3>
+<ul>
+{% for item in count_per_brand %}
+    <li>{{ item.brand }}: {{ item.count }}</li>
+{% endfor %}
+</ul>
+
+<h3>Кількість речей кожного розміру</h3>
+<ul>
+{% for item in count_per_size %}
+    <li>{{ item.size }}: {{ item.count }}</li>
+{% endfor %}
+</ul>
+
+<h3>Кількість речей кожного кольору</h3>
+<ul>
+{% for item in count_per_color %}
+    <li>{{ item.color }}: {{ item.count }}</li>
+{% endfor %}
+</ul>
+
+<h3>Кількість речей для кожної статі</h3>
+<ul>
+{% for item in count_per_gender %}
+    <li>{{ item.gender }}: {{ item.count }}</li>
+{% endfor %}
+</ul>
+
+<h3>Кількість речей для кожного сезону</h3>
+<ul>
+{% for item in count_per_seasonality %}
+    <li>{{ item.seasonality }}: {{ item.count }}</li>
+{% endfor %}
+</ul>
+
+<h3>Кількість речей в кожному стані</h3>
+<ul>
+{% for item in count_per_state %}
+    <li>{{ item.state }}: {{ item.count }}</li>
+{% endfor %}
+</ul>
+<h3>Кількість речей за типом хімічної обробки</h3>
+<ul>
+{% for item in count_per_chemical_treatment %}
+    <li>{{ item.chemical_treatment }}: {{ item.count }}</li>
+{% endfor %}
+</ul>
+
+
+<h2>Статистика постачальників</h2>
+<h3>Кількість постачальників</h3>
+<ul>
+    <li>{{ total_suppliers }}</li>
+</ul>
+<h3>Кількість речей за кожним постачальником</h3>
+<ul>
+{% for supplier in count_per_supplier %}
+    <li>{{ supplier.supplier__company_name }}: {{ supplier.count }}</li>
+{% endfor %}
+</ul>
+<h3>Середня ціна речей кожного постачальника</h3>
+<ul>
+{% for supplier in average_price_per_supplier %}
+    <li>{{ supplier.supplier__company_name }}: {{ supplier.count|floatformat:2  }} грн</li>
+{% endfor %}
+</ul>
+<h3>Загальна ціна речей кожного постачальника</h3>
+<ul>
+{% for supplier in total_price_per_supplier %}
+    <li>{{ supplier.supplier__company_name }}: {{ supplier.count   }} грн</li>
+{% endfor %}
+</ul>
+
+
+<h2>Статистика тканини</h2>
+<h3>Кількість тканин</h3>
+<ul>
+    <li>{{ total_fabrics }}</li>
+</ul>
+
+<h3>Кількість тканин за цільністю </h3>
+<ul>
+{% for fabric in count_per_destiny %}
+    <li>{{ fabric.destiny }}: {{ fabric.count   }} </li>
+{% endfor %}
+</ul>
+<h3>Кількість тканин за еластичністю </h3>
+<ul>
+{% for fabric in count_per_elasticity %}
+    <li>{{ fabric.elasticity }}: {{ fabric.count   }} </li>
+{% endfor %}
+</ul>
+<h3>Кількість тканин за повітропроникністю </h3>
+<ul>
+{% for fabric in count_per_breathability %}
+    <li>{{ fabric.breathability }}: {{ fabric.count   }} </li>
+{% endfor %}
+</ul>
+<h3>Кількість тканин за текстурою </h3>
+<ul>
+{% for fabric in count_per_surface_texture %}
+    <li>{{ fabric.surface_texture }}: {{ fabric.count   }} </li>
+{% endfor %}
+</ul>
+<h3>Кількість тканин за стійкістю до стиснення </h3>
+<ul>
+{% for fabric in count_per_compression_resistance %}
+    <li>{{ fabric.compression_resistance }}: {{ fabric.count   }} </li>
+{% endfor %}
+</ul>
+<h3>Кількість тканин за стійкістю кольору </h3>
+<ul>
+{% for fabric in count_per_color_fastness %}
+    <li>{{ fabric.color_fastness }}: {{ fabric.count   }} </li>
+{% endfor %}
+</ul>
+
+
 {% endblock %}

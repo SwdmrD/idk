@@ -6,9 +6,13 @@ from . import views
 urlpatterns = [
     path('', views.home, name='home'),
     path('edit_request', views.edit_request, name='edit_request'),
-    path('items',  views.list, name='lists'),
     path('statistics',  views.statistics, name='statistics'),
+    path('choose_a_company', views.choosing, name='choose_a_company'),
+    path('agreement_pdf/<int:supplier_id>', views.generate_pdf, name='generate_pdf'),
 
+    path('items', views.list_item, name='lists_item'),
+    path('fabrics', views.list_fabric, name='lists_fabric'),
+    path('suppliers', views.list_supplier, name='lists_supplier'),
 
     path('filtration_fabric', views.filters_fabric, name='filtration_fabric'),
     path('filtration_item', views.filters_item, name='filtration_item'),

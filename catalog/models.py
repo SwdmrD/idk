@@ -20,53 +20,53 @@ phone_validator = RegexValidator(
 
 class Fabric(models.Model):
     DESTINY = (
-        ('high', 'Висока'),
-        ('moderate', 'Помірна'),
-        ('average', 'Середня'),
-        ('low', 'Низька'),
-        ('different', 'Різна'),
+        ('Висока', 'Висока'),
+        ('Помірна', 'Помірна'),
+        ('Середня', 'Середня'),
+        ('Низька', 'Низька'),
+        ('Різна', 'Різна'),
     )
     ELASTICITY = (
-        ('non-elastic', 'Не еластична'),
-        ('almost non-elastic', 'Майже не еластична'),
-        ('partially elastic', 'Частково еластична'),
-        ('highly elastic', 'Добре еластична')
+        ('Не еластична', 'Не еластична'),
+        ('Майже не еластична', 'Майже не еластична'),
+        ('Частково еластична', 'Частково еластична'),
+        ('Добре еластична', 'Добре еластична')
     )
 
     BREATHABILITY = (
-        ('low', 'Низька'),
-        ('almost absent', 'Майже відсутня'),
-        ('medium', 'Середня'),
-        ('high', 'Висока')
+        ('Низька', 'Низька'),
+        ('Майже відсутня', 'Майже відсутня'),
+        ('Середня', 'Середня'),
+        ('Висока', 'Висока')
     )
 
     TEXTURE = (
-        ('glossy', 'Блискуча'),
-        ('geometric', 'Геометрична'),
-        ('smooth', 'Гладка'),
-        ('textured', 'Гофрована'),
-        ('diagonal', 'Діагональна'),
-        ('matte', 'Матова'),
-        ('embossed', 'Рельєфна'),
-        ('ribbed', 'Рубчаста'),
-        ('mesh', 'Сітчаста'),
-        ('complex', 'Складна'),
-        ('striped', 'Смужкова'),
-        ('rough', 'Шорстка')
+        ('Блискуча', 'Блискуча'),
+        ('Гладка', 'Гладка'),
+        ('Гофрована', 'Гофрована'),
+        ('Діагональна', 'Діагональна'),
+        ('Матова', 'Матова'),
+        ('М\'яка', 'М\'яка'),
+        ('Рельєфна', 'Рельєфна'),
+        ('Рубчаста', 'Рубчаста'),
+        ('Сітчаста', 'Сітчаста'),
+        ('Складна', 'Складна'),
+        ('Смужкова', 'Смужкова'),
+        ('Шорстка', 'Шорстка')
     )
 
     RESISTANCE = (
-        ('high resistance', 'Висока стійкість'),
-        ('medium resistance', 'Середня стійкість'),
-        ('low resistance', 'Низька стійкість'),
-        ('anti-compression fabric', 'Антикомпресійна тканина')
+        ('Висока стійкість', 'Висока стійкість'),
+        ('Середня стійкість', 'Середня стійкість'),
+        ('Низька стійкість', 'Низька стійкість'),
+        ('Антикомпресійна тканина', 'Антикомпресійна тканина')
     )
 
     FASTNESS = (
-        ('high fastness', 'Висока стійкість'),
-        ('medium fastness', 'Середня стійкість'),
-        ('low fastness', 'Низька стійкість'),
-        ('unknown', 'Невідомо')
+        ('Висока стійкість', 'Висока стійкість'),
+        ('Середня стійкість', 'Середня стійкість'),
+        ('Низька стійкість', 'Низька стійкість'),
+        ('Невідомо', 'Невідомо')
     )
     id_fabric = models.AutoField(primary_key=True)
     fabric_name = models.CharField('Назва тканини', validators=[name_validator], unique=True, max_length=30)
@@ -108,12 +108,13 @@ class Supplier(models.Model):
 
 class Customer(models.Model):
     id_customer = models.AutoField(primary_key=True)
-    name = models.CharField('Ім\'я', max_length=30)
-    surname = models.CharField('Прізвище', max_length=30)
-    middle_name = models.CharField('По-батькові', max_length=30)
-    city = models.CharField('Місто', max_length=30)
-    address = models.CharField('Вулиця', max_length=30)
+    name = models.CharField('Ім\'я', validators=[name_validator], max_length=30)
+    surname = models.CharField('Прізвище', validators=[name_validator], max_length=30)
+    middle_name = models.CharField('По-батькові', validators=[name_validator], max_length=30)
+    city = models.CharField('Місто', validators=[name_validator], max_length=30)
+    address = models.CharField('Вулиця', validators=[name_validator], max_length=30)
     number_of_house = models.CharField('Номер будинку', max_length=30)
+
     phone_number = models.CharField('Телефон', max_length=16)
     email = models.EmailField('Пошта', max_length=100)
     passport_code = models.CharField('Код паспорту', max_length=10)
@@ -155,49 +156,53 @@ class Item(models.Model):
         ('xxl', 'XXL')
     )
     TREATMENT = (
-        ('not processed', 'Не оброблено'),
-        ('needs chemical treatment', 'Потребує хімічної обробки'),
-        ('treated with light chemistry', 'Оброблено легкою хімією'),
-        ('treated with heavy chemicals', 'Оброблено важкою хімією'),
-        ('treated with anti-allergic agents', 'Оброблено протиалергічними засобами')
+        ('Не оброблено', 'Не оброблено'),
+        ('Потребує хімічної обробки', 'Потребує хімічної обробки'),
+        ('Оброблено легкою хімією', 'Оброблено легкою хімією'),
+        ('Оброблено важкою хімією', 'Оброблено важкою хімією'),
+        ('Оброблено протиалергічними засобами', 'Оброблено протиалергічними засобами')
     )
+
     SEASONALITY = (
-        ('winter', 'Зима'),
-        ('spring', 'Весна'),
-        ('summer', 'Літо'),
-        ('autumn', 'Осінь'),
-        ('demi-season', 'Демісезон'),
-        ('all', 'Любий'),
+        ('Зима', 'Зима'),
+        ('Весна', 'Весна'),
+        ('Літо', 'Літо'),
+        ('Осінь', 'Осінь'),
+        ('Демісезон', 'Демісезон'),
+        ('Любий', 'Любий'),
     )
+
     COLOR = (
-        ('beige', 'Бежевий'),
-        ('white', 'Білий'),
-        ('blue', 'Блакитний'),
-        ('burgundy', 'Бордовий'),
-        ('yellow', 'Жовтий'),
-        ('green', 'Зелений'),
-        ('brown', 'Коричневий'),
-        ('orange', 'Помаранчевий'),
-        ('pink', 'Рожевий'),
-        ('blue', 'Синій'),
-        ('gray', 'Сірий'),
-        ('red', 'Червоний'),
-        ('black', 'Чорний'),
-        ('purple', 'Фіолетовий'),
-        ('other color', 'Інші кольори'),
-        ('multicolored', 'Різнокольоровий'),
-        ('print', 'Принт'),
+        ('Бежевий', 'Бежевий'),
+        ('Білий', 'Білий'),
+        ('Блакитний', 'Блакитний'),
+        ('Бордовий', 'Бордовий'),
+        ('Жовтий', 'Жовтий'),
+        ('Зелений', 'Зелений'),
+        ('Коричневий', 'Коричневий'),
+        ('Помаранчевий', 'Помаранчевий'),
+        ('Рожевий', 'Рожевий'),
+        ('Синій', 'Синій'),
+        ('Сірий', 'Сірий'),
+        ('Червоний', 'Червоний'),
+        ('Чорний', 'Чорний'),
+        ('Фіолетовий', 'Фіолетовий'),
+        ('Інші кольори', 'Інші кольори'),
+        ('Різнокольоровий', 'Різнокольоровий'),
+        ('Принт', 'Принт'),
     )
+
     GENDER = (
-        ('female', 'Жіночій'),
-        ('male', 'Чоловічий'),
-        ('unisex', 'Унісекс')
+        ('Жіночій', 'Жіночій'),
+        ('Чоловічий', 'Чоловічий'),
+        ('Унісекс', 'Унісекс')
     )
+
     STATE = (
-        ('significant defects', 'Є значні дефекти'),
-        ('minor defects', 'Є незначні дефекти'),
-        ('slightly worn', 'Трішки ношений'),
-        ('new', 'Новий'),
+        ('Є значні дефекти', 'Є значні дефекти'),
+        ('Є незначні дефекти', 'Є незначні дефекти'),
+        ('Трішки ношений', 'Трішки ношений'),
+        ('Новий', 'Новий'),
     )
     id_item = models.AutoField(primary_key=True)
     supplier = models.ForeignKey(Supplier, on_delete=models.SET_NULL, null=True, verbose_name='Постачальник')
