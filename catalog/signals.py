@@ -9,7 +9,7 @@ def auto_reorder(sender, instance, **kwargs):
     items = Item.objects.count()
     sold_item_count = Receipt.objects.count()
     unsold_item_count = items - sold_item_count
-    if unsold_item_count < 10:
+    while unsold_item_count < 10:
         supplier = random.choice(Supplier.objects.all())
         fabric = random.choice(Fabric.objects.all())
         type = random.choice(['Вечірня сукня', 'Куртка', 'Футболка', 'Класичні штани',
@@ -52,4 +52,5 @@ def auto_reorder(sender, instance, **kwargs):
             state=state,
             price=price
         )
+        unsold_item_count += 1
 

@@ -203,6 +203,7 @@ def filters_customer(request):
 
 def filters_receipt(request):
     form = ReceiptFilterForm(request.GET)
+
     if request.method == 'GET' and form.is_valid():
         id_item_values = form.cleaned_data.get('id_item')
         id_customer_values = form.cleaned_data.get('id_customer')
@@ -227,9 +228,11 @@ def filters_receipt(request):
         if payment_type_values:
             q_objects &= Q(payment_type__in=payment_type_values)
         filtered_receipts = Receipt.objects.filter(q_objects)
+        filtered_receipts = filtered_receipts.order_by('number_of_receipt')
     else:
         filtered_receipts = Receipt.objects.all()
         form = ReceiptFilterForm()
+        filtered_receipts = filtered_receipts.order_by('number_of_receipt')
     return render(request, 'catalog/filtration/filtration_receipt.html',
                   {'form': form, 'filtered_receipts': filtered_receipts})
 
@@ -382,100 +385,109 @@ def list_receipt(request):
 
 def search_item(request):
     query = request.GET.get('q')
-    word = ""
+    words = query.split() if query else []
     items = Item.objects.all()
-    if request.method == 'GET' and query:
-        word = query
-        items = Item.objects.filter(
-            Q(id_item__iregex=query) |
-            Q(type__iregex=query) |
-            Q(brand__iregex=query) |
-            Q(supplier__company_name__iregex=query) |
-            Q(fabric__fabric_name__iregex=query) |
-            Q(size__iregex=query) |
-            Q(gender__iregex=query) |
-            Q(color__iregex=query) |
-            Q(chemical_treatment__iregex=query) |
-            Q(seasonality__iregex=query) |
-            Q(state__iregex=query) |
-            Q(price__iregex=query)
-        )
-    return render(request, 'catalog/search/search_item.html', {'items': items, 'word':word})
+    if request.method == 'GET' and words:
+        for word in words:
+            q_objects = (
+                    Q(id_item__iregex=word) |
+                    Q(type__iregex=word) |
+                    Q(brand__iregex=word) |
+                    Q(supplier__company_name__iregex=word) |
+                    Q(fabric__fabric_name__iregex=word) |
+                    Q(size__iregex=word) |
+                    Q(gender__iregex=word) |
+                    Q(color__iregex=word) |
+                    Q(chemical_treatment__iregex=word) |
+                    Q(seasonality__iregex=word) |
+                    Q(state__iregex=word) |
+                    Q(price__iregex=word)
+            )
+            items = items.filter(q_objects)
+    words = ' '.join(words)
+    return render(request, 'catalog/search/search_item.html', {'items': items, 'word':words})
 
 
 def search_fabric(request):
     query = request.GET.get('q')
-    word = ""
+    words = query.split() if query else []
     fabrics = Fabric.objects.all()
-    if request.method == 'GET' and query:
-        word = query
-        fabrics = Fabric.objects.filter(
-            Q(fabric_name__iregex=query) |
-            Q(destiny__iregex=query) |
-            Q(elasticity__iregex=query) |
-            Q(breathability__iregex=query) |
-            Q(surface_texture__iregex=query) |
-            Q(compression_resistance__iregex=query) |
-            Q(color_fastness__iregex=query)
-        )
-    return render(request, 'catalog/search/search_fabric.html', {'fabrics': fabrics, 'word': word})
+    if request.method == 'GET' and words:
+        for word in words:
+            q_objects = (
+                    Q(fabric_name__iregex=word) |
+                    Q(destiny__iregex=word) |
+                    Q(elasticity__iregex=word) |
+                    Q(breathability__iregex=word) |
+                    Q(surface_texture__iregex=word) |
+                    Q(compression_resistance__iregex=word) |
+                    Q(color_fastness__iregex=word)
+            )
+            fabrics = fabrics.filter(q_objects)
+    words = ' '.join(words)
+    return render(request, 'catalog/search/search_fabric.html', {'fabrics': fabrics, 'word': words})
 
 
 def search_supplier(request):
     query = request.GET.get('q')
-    word = ""
+    words = query.split() if query else []
     suppliers = Supplier.objects.all()
-    if request.method == 'GET' and query:
-        word = query
-        suppliers = Supplier.objects.filter(
-            Q(company_name__iregex=query) |
-            Q(contact_person_name__iregex=query) |
-            Q(contact_person_surname__iregex=query) |
-            Q(phone_number__iregex=query) |
-            Q(city__iregex=query) |
-            Q(email__iregex=query)
-        )
-    return render(request, 'catalog/search/search_supplier.html', {'suppliers': suppliers, 'word':word})
+    if request.method == 'GET' and words:
+        for word in words:
+            q_objects = (
+                    Q(company_name__iregex=word) |
+                    Q(contact_person_name__iregex=word) |
+                    Q(contact_person_surname__iregex=word) |
+                    Q(phone_number__iregex=word) |
+                    Q(city__iregex=word) |
+                    Q(email__iregex=word)
+            )
+            suppliers = suppliers.filter(q_objects)
+    words = ' '.join(words)
+    return render(request, 'catalog/search/search_supplier.html', {'suppliers': suppliers, 'word': words})
 
 
 def search_customer(request):
     query = request.GET.get('q')
-    word = ""
+    words = query.split() if query else []
     customers = Customer.objects.all()
-    if request.method == 'GET' and query:
-        word = query
-        customers = Customer.objects.filter(
-            Q(customer_name__iregex=query) |
-            Q(customer_surname__iregex=query) |
-            Q(customer_middle_name__iregex=query) |
-            Q(customer_city__iregex=query) |
-            Q(customer_address__iregex=query) |
-            Q(customer_number_of_house__iregex=query) |
-            Q(customer_phone_number__iregex=query) |
-            Q(customer_email__iregex=query) |
-            Q(customer_passport_code__iregex=query) |
-            Q(customer_password__iregex=query) |
-            Q(customer_credit_card__iregex=query)
-        )
-    return render(request, 'catalog/search/search_customer.html', {'customers': customers, 'word': word})
+    if request.method == 'GET' and words:
+        for word in words:
+            q_objects = (
+                    Q(customer_name__iregex=word) |
+                    Q(customer_surname__iregex=word) |
+                    Q(customer_middle_name__iregex=word) |
+                    Q(customer_city__iregex=word) |
+                    Q(customer_address__iregex=word) |
+                    Q(customer_number_of_house__iregex=word) |
+                    Q(customer_phone_number__iregex=word) |
+                    Q(customer_email__iregex=word) |
+                    Q(customer_passport_code__iregex=word) |
+                    Q(customer_password__iregex=word) |
+                    Q(customer_credit_card__iregex=word)
+            )
+            customers = customers.filter(q_objects)
+    words = ' '.join(words)
+    return render(request, 'catalog/search/search_customer.html', {'customers': customers, 'word': words})
 
 
 def search_receipt(request):
     query = request.GET.get('q')
-    word = ""
+    words = query.split() if query else []
     receipts = Receipt.objects.all()
-    if request.method == 'GET' and query:
-        word = query
-        receipts = Receipt.objects.filter(
-                Q(id_item__type__iregex=query) |
-                Q(id_customer__customer_name__iregex=query) |
-                Q(id_customer__customer_surname__iregex=query) |
-                Q(the_item_cost__iregex=query) |
-                Q(method_of_delivery__iregex=query) |
-                Q(payment_type__iregex=query)
+    if request.method == 'GET' and words:
+        for word in words:
+            q_objects = (
+                    Q(id_item__type__iregex=word) |
+                    Q(id_customer__customer_name__iregex=word) |
+                    Q(id_customer__customer_surname__iregex=word) |
+                    Q(the_item_cost__iregex=word) |
+                    Q(method_of_delivery__iregex=word) |
+                    Q(payment_type__iregex=word)
             )
-    return render(request, 'catalog/search/search_receipt.html', {'receipts': receipts, 'word': word})
-
+            receipts = receipts.filter(q_objects)
+    words = ' '.join(words)
+    return render(request, 'catalog/search/search_receipt.html', {'receipts': receipts, 'word': words})
 
 
 def statistics(request):
@@ -551,7 +563,7 @@ def choosing_r(request):
         receipt = Receipt.objects.filter(number_of_receipt=receipt_number).first()
         receipts.append(receipt)
 
-    return render(request, 'catalog/documents/receipt.html', {'receipts': receipts, 'receipt': receipt,})
+    return render(request, 'catalog/documents/receipt.html', {'receipts': receipts, 'receipt': receipt})
 
 
 def generate_r(request, receipt_id):
