@@ -226,7 +226,6 @@ class Item(models.Model):
     seasonality = models.CharField('Сезонність', max_length=100, choices=SEASONALITY)
     state = models.CharField('Стан', max_length=100, choices=STATE)
     price = models.FloatField('Ціна')
-    date_of_appearance = models.DateField("Дата появи товару")
 
     def __str__(self):
         return f'{self.type}'
@@ -280,3 +279,6 @@ class Receipt(models.Model):
 
     class Meta:
         app_label = 'catalog'
+
+
+

@@ -94,7 +94,6 @@ def filters_item(request):
         seasonality_values = form.cleaned_data.get('seasonality')
         min_price = form.cleaned_data.get('min_price')
         max_price = form.cleaned_data.get('max_price')
-        date_of_appearance_values = form.cleaned_data.get('date_of_appearance', [])
         supplier_values = form.cleaned_data.get('supplier', [])
         q_objects = Q()
         if brand_values:
@@ -117,8 +116,6 @@ def filters_item(request):
             q_objects &= Q(price__gte=min_price)
         if max_price is not None:
             q_objects &= Q(price__lte=max_price)
-        if date_of_appearance_values:
-            q_objects &= Q(date_of_appearance__in=date_of_appearance_values)
         if supplier_values:
             q_objects &= Q(supplier__in=supplier_values)
         filtered_items = Item.objects.filter(q_objects)
@@ -264,8 +261,6 @@ def list_item(request):
             items = items.order_by(f'{"-" if is_reversed else ""}seasonality')
         if form.cleaned_data['sort_by'] == 'price':
             items = items.order_by(f'{"-" if is_reversed else ""}price')
-        if form.cleaned_data['sort_by'] == 'date_of_appearance':
-            items = items.order_by(f'{"-" if is_reversed else ""}date_of_appearance')
         if form.cleaned_data['sort_by'] == 'supplier':
             items = items.order_by(f'{"-" if is_reversed else ""}supplier')
     context = {'items': items,
@@ -498,21 +493,12 @@ def statistics(request):
     # Постачальники, у яких найменше поставок
     least_deliveries = count_per_supplier.aggregate(Min('count'))['count__min']
     least_deliveries_suppliers = count_per_supplier.filter(count=least_deliveries)
-    # Постачальники, у яких найбільше продажів
-    suppliers_sales_counts = Supplier.objects.annotate(count=Count('item__receipt'))
-
-    # Знайти найбільшу кількість продажів
-    max_sales = suppliers_sales_counts.aggregate(Max('count'))['count__max']
-
-    # Отримати постачальників з найбільшою кількістю продажів
-    most_sales_suppliers = suppliers_sales_counts.filter(count=max_sales)
-
     # сума кожного чека
     receipt_totals = Receipt.objects.values('number_of_receipt').annotate(total=Sum('the_item_cost'))
     # Найбільший чек
     biggest_receipt =receipt_totals.aggregate(Max('total'))['total__max']
     biggest_receipts = receipt_totals.filter(total=biggest_receipt)
-    # Найменший чек
+    # Найменший чекп
     smallest_receipt = receipt_totals.aggregate(Min('total'))['total__min']
     smallest_receipts = receipt_totals.filter(total=smallest_receipt)
   # Середня вартість товарів кожного типу тканини
@@ -524,7 +510,6 @@ def statistics(request):
                'average_price_per_supplier': average_price_per_supplier,
                'most_deliveries_suppliers': most_deliveries_suppliers,
                'least_deliveries_suppliers': least_deliveries_suppliers,
-               'most_sales_suppliers': most_sales_suppliers,
                'biggest_receipts': biggest_receipts,
                'smallest_receipt': smallest_receipt,
                'smallest_receipts': smallest_receipts,

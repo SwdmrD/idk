@@ -13,23 +13,12 @@ class ItemForm(ModelForm):
     class Meta:
         model = Item
         fields = "__all__"
-        widgets = {
-            'date_of_appearance': forms.DateInput(attrs={'type': 'date', 'placeholder': 'дд.мм.рррр'}),
-        }
 
     def clean_price(self):
         price = self.cleaned_data.get('price')
         if price and (price < 0 or price > 5000):
             raise ValidationError('Неправильна ціна, можливий діапазон від 0 до 5000')
         return round(price, 2)
-
-    def clean_date_of_appearance(self):
-        date_of_appearance = self.cleaned_data.get('date_of_appearance')
-
-        if date_of_appearance and date_of_appearance > date.today() + timedelta(days=1):
-            raise ValidationError('Дата не може бути у майбутньому')
-
-        return date_of_appearance
 
 
 class ItemForm2(ModelForm):
@@ -37,19 +26,12 @@ class ItemForm2(ModelForm):
         model = Item
         fields = "__all__"
 
+
     def clean_price(self):
         price = self.cleaned_data.get('price')
         if price and (price < 0 or price > 5000):
             raise ValidationError('Неправильна ціна, можливий діапазон від 0 до 5000')
         return round(price, 2)
-
-    def clean_date_of_appearance(self):
-        date_of_appearance = self.cleaned_data.get('date_of_appearance')
-
-        if date_of_appearance and date_of_appearance > date.today() + timedelta(days=1):
-            raise ValidationError('Дата не може бути у майбутньому')
-
-        return date_of_appearance
 
 
 class FabricForm(ModelForm):
@@ -284,18 +266,14 @@ class ItemFilterForm(forms.Form):
         label='Максимальна ціна',
         required=False
     )
-    date_of_appearance = forms.MultipleChoiceField(
-        label='Дата появи товару',
-        choices= [(x['date_of_appearance'], x['date_of_appearance']) for x in Item.objects.values('date_of_appearance').distinct()],
-        widget=forms.CheckboxSelectMultiple,
-        required=False
-    )
+
     supplier = forms.MultipleChoiceField(
         label='Постачальник',
         choices=[(x.id_supplier, x.company_name) for x in Supplier.objects.all()],
         widget=forms.CheckboxSelectMultiple,
         required=False
     )
+
 
 
 class CustomerFilterForm(forms.Form):
@@ -445,8 +423,8 @@ class SortByItem(forms.Form):
         ("state", "Стан"),
         ("seasonality", "Сезонність"),
         ("price", "Ціна"),
-        ("date_of_appearance", "Дата появи"),
-        ("supplier", "Постачальник")])
+        ("supplier", "Постачальник"),
+        ("sold", "Продано")])
 
 
 class SortBySupplier(forms.Form):
