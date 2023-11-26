@@ -1,6 +1,6 @@
 {% extends 'catalog/pattern.html' %}
 {% block title %}
-Список товарів
+Список тканин
 {% endblock %}
 {% block extra_css %}
 
@@ -10,9 +10,8 @@
             <div class="col" style="border: 3px solid #ad70c2;"><a class="p-2 text-dark" href="{% url 'lists_item' %}">Товари</a></div>
             <div class="col" style="border: 3px solid #ad70c2;"><a class="p-2 text-dark" href="{% url 'lists_supplier' %}">Постачальники</a></div>
             <div class="col" style="border: 3px solid #ad70c2;"><a class="p-2 text-dark" href="{% url 'lists_fabric' %}">Тканини</a></div>
-            <div class="col" style="border: 3px solid #ad70c2;"><a class="p-2 text-dark" href="#">Клієнти</a></div>
-            <div class="col" style="border: 3px solid #ad70c2;"><a class="p-2 text-dark" href="#">Чеки</a></div>
-            </div>
+           <div class="col" style="border: 3px solid #ad70c2;"><a class="p-2 text-dark" href="{% url 'lists_customer' %}">Клієнти</a></div>
+            <div class="col" style="border: 3px solid #ad70c2;"><a class="p-2 text-dark" href="{% url 'lists_receipt' %}">Чеки</a></div></div>
 
 <p></p>
 <div><form method="POST">
@@ -49,7 +48,7 @@
             <td>{{ fabric.get_surface_texture_display }}</td>
             <td>{{ fabric.get_compression_resistance_display }}</td>
             <td>{{ fabric.get_color_fastness_display }}</td>
-            <td><a href="{% url 'edit_fabric' fabric.pk %}">Змінити</a>
+            <td><a href="{% url 'edit_fabric' fabric.pk %}">Змінити</a><br>
             <a href="{% url 'delete_fabric' fabric.pk %}">Видалити</a>
             </td>
         </tr>

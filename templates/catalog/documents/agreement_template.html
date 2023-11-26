@@ -79,12 +79,13 @@
 <div class="container" style="justify-content: space-around;">
   <div class="space"> Замовник:<br>
     Назва: Речі з історією<br>
-    Адреса: м. Харків, вул. Зелена, буд. 26, офіс 404<br>
+    Адреса: м. Харків, вул. Зелена, <br>буд. 26, офіс 404<br>
     Тел/факс: +380 12-345-67-89<br>
       E-mail: its.mail@gmail.com<br>
-      Директор: ...<br>
+      Директор: *Ім'я Фамілія*<br>
       <p></p>
-      __________ Директор
+      Підпис:<br><br>
+      Директор *Ім'я Фамілія*
     </div>
     <div class="space">
   Виконавець:<br>
@@ -93,8 +94,9 @@
       Тел. {{ supplier.city }}<br>
       E-mail: {{ supplier.email }}<br>
         Фізична особа: {{ supplier.contact_person_name }} {{ supplier.contact_person_surname }}<br>
-        <p></p>
-        __________ {{ supplier.contact_person_surname }}
+        <p></p><br>
+      Підпис:<br><br>
+         {{ supplier.contact_person_surname }} {{ supplier.contact_person_name }}
         </div>
     </div>
 

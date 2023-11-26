@@ -1,0 +1,61 @@
+{% extends 'catalog/pattern.html' %}
+{% block title %}
+Список чеків
+{% endblock %}
+{% block extra_css %}
+
+{% endblock %}
+{% block body %}
+<div class="row">
+            <div class="col" style="border: 3px solid #ad70c2;"><a class="p-2 text-dark" href="{% url 'lists_item' %}">Товари</a></div>
+            <div class="col" style="border: 3px solid #ad70c2;"><a class="p-2 text-dark" href="{% url 'lists_supplier' %}">Постачальники</a></div>
+            <div class="col" style="border: 3px solid #ad70c2;"><a class="p-2 text-dark" href="{% url 'lists_fabric' %}">Тканини</a></div>
+            <div class="col" style="border: 3px solid #ad70c2;"><a class="p-2 text-dark" href="{% url 'lists_customer' %}">Клієнти</a></div>
+            <div class="col" style="border: 3px solid #ad70c2;"><a class="p-2 text-dark" href="{% url 'lists_receipt' %}">Чеки</a></div>
+            </div>
+
+<p></p>
+<div><form method="POST">
+        {% csrf_token %} {{ sort_form.as_p }}
+<input type="submit" value="Сортувати"/></form></div>
+
+<p><a href="{% url 'new_receipt' %}">Додати чек</a>
+
+<div class="cont">
+
+    <table>
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>Товар</th>
+            <th>Покупець</th>
+            <th>Номер чеку</th>
+            <th>Дата покупки</th>
+            <th>Вартість товару</th>
+            <th>Тип доставки</th>
+            <th>Тип оплати</th>
+            <th>Дії</th>
+        </tr>
+    </thead>
+
+    <tbody>
+        {% for receipt in receipts %}
+        <tr>
+            <td>{{ receipt.id_receipt }}</td>
+            <td>{{ receipt.id_item }}</td>
+            <td>{{ receipt.id_customer }}</td>
+            <td>№ {{ receipt.number_of_receipt|stringformat:"07d"  }}</td>
+            <td>{{ receipt.date_of_purchase }}</td>
+            <td>{{ receipt.the_item_cost }} грн</td>
+            <td>{{ receipt.method_of_delivery }}</td>
+            <td>{{ receipt.payment_type }}</td>
+            <td><a href="{% url 'edit_receipt' receipt.pk %}">Змінити</a><br>
+            <a href="{% url 'delete_receipt' receipt.pk %}">Видалити</a>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+</div>
+
+{% endblock %}

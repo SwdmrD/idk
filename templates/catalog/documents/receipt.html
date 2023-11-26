@@ -1,0 +1,29 @@
+{% extends 'catalog/pattern.html' %}
+
+{% block title %}
+:))
+{% endblock %}
+
+{% block extra_css %}
+{% endblock %}
+{% block body %}
+<ul>
+    <h2>Оберіть необіхдний чек:</h2>
+{% for receipt in receipts %}
+
+    <li> <b>Чек №: {{ receipt.number_of_receipt|stringformat:"07d"  }}</b>
+            товар: {{ receipt.id_item }},
+            покупець: {{ receipt.id_customer }},
+            дата покупки {{ receipt.date_of_purchase }},
+            ціна товару {{ receipt.the_item_cost }} грн,
+            доставка {{ receipt.method_of_delivery }},
+            оплата {{ receipt.payment_type }}
+         <p>
+        <a href="{% url 'generate_receipt' receipt.pk %}">Завантажити чек</a></p>
+        <hr>
+
+
+        {% endfor %}
+    </li>
+</ul>
+{% endblock %}

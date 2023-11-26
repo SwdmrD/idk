@@ -1,0 +1,70 @@
+{% extends 'catalog/pattern.html' %}
+{% block title %}
+Список клієнтів
+{% endblock %}
+{% block extra_css %}
+
+{% endblock %}
+{% block body %}
+<div class="row">
+            <div class="col" style="border: 3px solid #ad70c2;"><a class="p-2 text-dark" href="{% url 'lists_item' %}">Товари</a></div>
+            <div class="col" style="border: 3px solid #ad70c2;"><a class="p-2 text-dark" href="{% url 'lists_supplier' %}">Постачальники</a></div>
+            <div class="col" style="border: 3px solid #ad70c2;"><a class="p-2 text-dark" href="{% url 'lists_fabric' %}">Тканини</a></div>
+            <div class="col" style="border: 3px solid #ad70c2;"><a class="p-2 text-dark" href="{% url 'lists_customer' %}">Клієнти</a></div>
+            <div class="col" style="border: 3px solid #ad70c2;"><a class="p-2 text-dark" href="{% url 'lists_receipt' %}">Чеки</a></div></div>
+
+<p></p>
+<div><form method="POST">
+        {% csrf_token %} {{ sort_form.as_p }}
+<input type="submit" value="Сортувати"/></form></div>
+
+<p><a href="{% url 'new_customer' %}">Додати клієнта</a>
+
+<div class="cont">
+
+    <table>
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>Ім'я</th>
+            <th>Прізвище</th>
+            <th>По-батькові</th>
+            <th>Місто</th>
+            <th>Вулиця</th>
+            <th>Номер будинку</th>
+            <th>Телефон</th>
+            <th>Пошта</th>
+            <th>Код паспорту</th>
+            <th>День народження</th>
+            <th>Пароль</th>
+            <th>Номер кредитної карти</th>
+            <th>Дії</th>
+        </tr>
+    </thead>
+
+    <tbody>
+        {% for customer in customers %}
+        <tr>
+            <td>{{ customer.id_customer }}</td>
+            <td>{{ customer.customer_name }}</td>
+            <td>{{ customer.customer_surname }}</td>
+            <td>{{ customer.customer_middle_name }}</td>
+            <td>{{ customer.customer_city }}</td>
+            <td>{{ customer.customer_address }}</td>
+            <td>{{ customer.customer_number_of_house }}</td>
+            <td>{{ customer.customer_phone_number }}</td>
+            <td>{{ customer.customer_email }}</td>
+            <td>{{ customer.customer_passport_code }}</td>
+            <td>{{ customer.customer_date_of_birth }}</td>
+            <td>{{ customer.customer_password }}</td>
+            <td>{{ customer.customer_credit_card }}</td>
+            <td><a href="{% url 'edit_customer' customer.pk %}">Змінити</a>
+            <a href="{% url 'delete_customer' customer.pk %}">Видалити</a>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+</div>
+
+{% endblock %}

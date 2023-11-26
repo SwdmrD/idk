@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <style>
+        header{
+            text-align: center;
+        }
+    body{
+     font-size: 16px;
+    }
+  .container {
+  display: flex;
+  justify-content: space-between;
+}
+  .space{
+      width: 40%;
+  }
+
+        h3{
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+<header>
+    <h3>Секонд-хенд "Речі з історією </h3>
+    <h3> м. Харків</h3>
+    **********************************************************************
+</header>
+
+<p><p><p>
+<div class="cont" style="text-align: center">
+<div class="container" style="justify-content: space-evenly; text-align: start">
+  <div class="space"> Номер чеку:<br><br>
+    Дата видачі:<br><br>
+    Оплата:<br><br>
+    Тип доставки:<br><br><br>
+    Покупець:<br><br>
+    Тел.: <br><br>
+    Пошта:<br><br>
+    Адреса:<br><br>
+    </div>
+
+    <div class="space">
+      {{ receipt.number_of_receipt|stringformat:"07d"  }}<br><br>
+      {{ receipt.date_of_purchase }}<br><br>
+      {{ receipt.payment_type  }}<br><br>
+      {{ receipt.method_of_delivery }}<br><br><br>
+      {{ customer.customer_surname }} {{ customer.customer_name }}  {{ customer.customer_middle_name }}<br><br>
+      {{ customer.customer_phone_number }}<br><br>
+      {{ customer.customer_email }}<br><br>
+      м. {{ customer.customer_city }}, вул. {{ customer.customer_address }} буд. {{ customer.customer_number_of_house }}<br><br>
+        </div>
+    </div>
+    **********************************************************************
+
+</div>
+<p></p>
+<div class="cont" style="text-align: center">
+<div class="container" style="justify-content: space-evenly; text-align: start">
+  <div class="space">
+  {% for item in items %}
+    {{ item }}<br><br>
+    {% endfor %}
+    </div>
+    <div class="space">
+        {% for item in items %}
+        {{ item.price }} грн<br><br>
+        {% endfor %}<br>
+   </div>
+    </div>
+    **********************************************************************<br><br>
+<div class="cont" style="text-align: center">
+<div class="container" style="justify-content: space-evenly; text-align: start">
+  <div class="space">
+
+  <b>Сума</b>
+    </div>
+    <div class="space">
+
+       {{total_cost}} грн<br><br>
+       <br>
+   </div>
+    </div>
+</div>
+</div>
+</body>
+</html>
+
+
+

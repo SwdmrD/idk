@@ -1,0 +1,20 @@
+{% extends 'catalog/pattern.html' %}
+{% block extra_css %}
+    form{
+    margin-left: 10px
+    }
+{% endblock %}
+{% block title %}
+Створення
+{% endblock %}
+
+{% block body %}
+<form method="post">{% csrf_token %}
+    {{ form.as_p }}
+    <input type="submit" value="Зберегти">
+       <a href="{% url 'lists_receipt' %}">
+    <button type="button">Повернутись до списку</button></a>
+</form>
+
+{% endblock %}
+

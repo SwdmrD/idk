@@ -1,5 +1,6 @@
 from django.db import models
 from django.core.validators import RegexValidator
+import random
 
 
 name_regex = r'^[А-ЩЬЮЯҐЄІЇа-щьюяґєії\'\s]+$'
@@ -16,6 +17,24 @@ phone_validator = RegexValidator(
     code='invalid_phone_number'
 )
 
+password_regex = r"^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&+])[A-Za-z\d@$!%*#?&+]{8,}$"
+password_validator = RegexValidator(
+    regex=password_regex,
+    message="Мінімум вісім символів, одна літера, одна цифра та один спеціальний символ: @ $ ! % * # ? & +",
+    code='invalid_password'
+)
+card_regex = r"^\d{4} \d{4} \d{4} \d{4}$"
+card_validator = RegexValidator(
+    regex=card_regex,
+    message="Номер картки записується у вигляді хххх хххх хххх хххх",
+    code='invalid_card'
+)
+passport_regex = r'^[1-9]\d{9}$'
+passport_validator = RegexValidator(
+    regex=passport_regex,
+    message="Номер паспорта не починається з 0 та містить 10 символів",
+    code='invalid_passport'
+)
 
 
 class Fabric(models.Model):
@@ -108,38 +127,29 @@ class Supplier(models.Model):
 
 class Customer(models.Model):
     id_customer = models.AutoField(primary_key=True)
-    name = models.CharField('Ім\'я', validators=[name_validator], max_length=30)
-    surname = models.CharField('Прізвище', validators=[name_validator], max_length=30)
-    middle_name = models.CharField('По-батькові', validators=[name_validator], max_length=30)
-    city = models.CharField('Місто', validators=[name_validator], max_length=30)
-    address = models.CharField('Вулиця', validators=[name_validator], max_length=30)
-    number_of_house = models.CharField('Номер будинку', max_length=30)
+    customer_name = models.CharField('Ім\'я', validators=[name_validator], max_length=30)
+    customer_surname = models.CharField('Прізвище', validators=[name_validator], max_length=30)
+    customer_middle_name = models.CharField('По-батькові', validators=[name_validator], max_length=30)
+    customer_city = models.CharField('Місто', validators=[name_validator], max_length=30)
+    customer_address = models.CharField('Вулиця', validators=[name_validator], max_length=30)
+    customer_number_of_house = models.IntegerField('Номер будинку')
+    customer_phone_number = models.CharField('Телефон', validators=[phone_validator], max_length=17)
+    customer_email = models.EmailField('Пошта', unique=True, max_length=100)
+    customer_passport_code = models.IntegerField('Код паспорту', unique=True, validators=[passport_validator])
+    customer_date_of_birth = models.DateField('День народження')
+    customer_password = models.CharField('Пароль', validators=[password_validator], max_length=40)
+    customer_credit_card = models.CharField('Номер кредитної карти', validators=[card_validator], unique=True, max_length=19)
 
-    phone_number = models.CharField('Телефон', max_length=16)
-    email = models.EmailField('Пошта', max_length=100)
-    passport_code = models.CharField('Код паспорту', max_length=10)
-    date_of_birth = models.DateField('День народження')
-    password = models.CharField('Пароль', max_length=40)
-    credit_cars = models.CharField('Номер кредитної карти', max_length=16)
-
-    def __str__(self):
-        return self.name
-
-    class Meta:
-        app_label = 'catalog'
-
-
-class Receipt(models.Model):
-    id_receipt = models.AutoField(primary_key=True)
-    id_item = models.ForeignKey('Item', on_delete=models.CASCADE, related_name='receipts')
-    id_customer = models.ForeignKey(Customer, on_delete=models.CASCADE)
-    date_of_purchase = models.DateTimeField('Дата покупки')
-    the_total_cost = models.FloatField('Загальна вартість')
-    method_of_delivery = models.CharField('Тип', max_length=30)
-    payment_type = models.CharField('Тип', max_length=30)
+    def save(self, *args, **kwargs):
+        self.customer_name = self.customer_name.capitalize()
+        self.customer_surname = self.customer_surname.capitalize()
+        self.customer_middle_name = self.customer_middle_name.capitalize()
+        self.customer_city = self.customer_city.capitalize()
+        self.customer_address = self.customer_address.capitalize()
+        super().save(*args, **kwargs)
 
     def __str__(self):
-        return f'{self.date_of_purchase} - {self.id_customer} - {self.id_receipt}'
+        return f'{self.customer_name}  {self.customer_surname}  {self.customer_middle_name}'
 
     class Meta:
         app_label = 'catalog'
@@ -218,15 +228,55 @@ class Item(models.Model):
     price = models.FloatField('Ціна')
     date_of_appearance = models.DateField("Дата появи товару")
 
-    def save(self, *args, **kwargs):
-        self.type = self.type.capitalize()
-        super().save(*args, **kwargs)
-
-
     def __str__(self):
-        return f'{self.type} - {self.supplier} - {self. fabric}'
+        return f'{self.type}'
 
     class Meta:
         app_label = 'catalog'
 
 
+class Receipt(models.Model):
+    PAYMENT = (
+        ('Готівка', 'Готівка'),
+        ('Безготівковий розрахунок', 'Безготівковий розрахунок'),
+    )
+    DELIVERY = (
+        ('Кур\'єрська доставка', 'Кур\'єрська доставка'),
+        ('Термінова кур\'єрська доставка', 'Термінова кур\'єрська доставка'),
+        ('Штатний кур\'єр', 'Штатний кур\'єр'),
+        ('Самовивіз із офісу', 'Самовивіз із офісу'),
+        ('Постамати', 'Постамати'),
+        ('Пошта України', 'Пошта України'),
+    )
+    id_receipt = models.AutoField(primary_key=True)
+    id_item = models.ForeignKey(Item, on_delete=models.SET_NULL, null=True, verbose_name='Товар', unique=True)
+    id_customer = models.ForeignKey(Customer, on_delete=models.SET_NULL, null=True, verbose_name='Покупець')
+    number_of_receipt = models.IntegerField('Номер чеку', null=True, blank=True)
+    date_of_purchase = models.DateTimeField('Дата покупки')
+    the_item_cost = models.FloatField('Вартість товару', null=True, blank=True)
+    method_of_delivery = models.CharField('Тип доставки', choices=DELIVERY, max_length=30)
+    payment_type = models.CharField('Тип оплати', choices=PAYMENT, max_length=30)
+
+    def save(self, *args, **kwargs):
+        if self.id_item:
+            self.the_item_cost = self.id_item.price
+        if not self.number_of_receipt:
+            matching_receipt = Receipt.objects.filter(
+                id_customer=self.id_customer,
+                date_of_purchase=self.date_of_purchase,
+                method_of_delivery=self.method_of_delivery,
+                payment_type=self.payment_type
+            ).first()
+            if matching_receipt:
+                self.number_of_receipt = matching_receipt.number_of_receipt
+            else:
+                self.number_of_receipt = random.randint(1, 1000000)
+                while Receipt.objects.filter(number_of_receipt=self.number_of_receipt).exists():
+                    self.number_of_receipt = random.randint(1, 1000000)
+        super().save(*args, **kwargs)
+
+    def __str__(self):
+        return f'{self.number_of_receipt}'
+
+    class Meta:
+        app_label = 'catalog'
