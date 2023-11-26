@@ -98,6 +98,10 @@ class CustomerForm2(ModelForm):
 
 
 class ReceiptForm(ModelForm):
+    id_item = forms.ModelChoiceField(
+        queryset=Item.objects.exclude(id_item__in=Receipt.objects.values_list('id_item', flat=True)),
+        required=False,
+    )
     class Meta:
         model = Receipt
         fields = "__all__"
@@ -423,8 +427,7 @@ class SortByItem(forms.Form):
         ("state", "Стан"),
         ("seasonality", "Сезонність"),
         ("price", "Ціна"),
-        ("supplier", "Постачальник"),
-        ("sold", "Продано")])
+        ("supplier", "Постачальник")])
 
 
 class SortBySupplier(forms.Form):

@@ -498,10 +498,10 @@ def statistics(request):
     # Найбільший чек
     biggest_receipt =receipt_totals.aggregate(Max('total'))['total__max']
     biggest_receipts = receipt_totals.filter(total=biggest_receipt)
-    # Найменший чекп
+    # Найменший чек
     smallest_receipt = receipt_totals.aggregate(Min('total'))['total__min']
     smallest_receipts = receipt_totals.filter(total=smallest_receipt)
-  # Середня вартість товарів кожного типу тканини
+    # Середня вартість товарів кожного типу тканини
     average_price_per_fabric_type = Item.objects.values('fabric__fabric_name').annotate(average_price=Avg('price'))
 
     context = {'average_price_per_brand': average_price_per_brand,
@@ -543,14 +543,20 @@ def generate_pdf(request, supplier_id):
 
 
 def choosing_r(request):
-    receipts = Receipt.objects.all()
-    receipts = receipts.order_by('number_of_receipt').distinct()
-    return render(request, 'catalog/documents/receipt.html', {'receipts': receipts})
+    unique_receipt_numbers = Receipt.objects.order_by('number_of_receipt').values_list('number_of_receipt',
+                                                                                       flat=True).distinct()
+    receipts = []
+    # Отримати всі товари для кожного унікального номера чека
+    for receipt_number in unique_receipt_numbers:
+        receipt = Receipt.objects.filter(number_of_receipt=receipt_number).first()
+        receipts.append(receipt)
+
+    return render(request, 'catalog/documents/receipt.html', {'receipts': receipts, 'receipt': receipt,})
 
 
 def generate_r(request, receipt_id):
-    today = (date.today() - timedelta(days = 365)).strftime("%d/%m/%Y")
-    last_date = (date.today() + timedelta(days = 365)).strftime("%d/%m/%Y")
+    today = (date.today() - timedelta(days=365)).strftime("%d/%m/%Y")
+    last_date = (date.today() + timedelta(days=365)).strftime("%d/%m/%Y")
     try:
         receipt = Receipt.objects.get(pk= receipt_id)
         customer = receipt.id_customer

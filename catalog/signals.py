@@ -17,7 +17,7 @@ def auto_reorder(sender, instance, **kwargs):
                               'Класичні джинси', 'Майка', 'Светр', 'Рубашка',
                               'Блузка', 'Коктейльна сукня', 'Бомбер', 'Джерсі',
                               'Повсякденні шорти', 'Пальчиковий жакет', 'Максі-спідниця', 'Фітнес-топ',
-                              'Джоггери', 'Пуловер', 'Костюмна сорочка', 'Шорти-бермуди',
+                              'Джоггери', 'Пуловер', 'Сорочка', 'Шорти-бермуди',
                               'Денім-спідниця', 'Теніска з коротким рукавом', 'Кардиган', 'Плащ',
                               'Літні штани', 'Пуховик', 'Комбінезон', 'Леггінси',
                               'Спортивні штани', 'Туніка', 'Брюки-кюлоти', 'Капрі'])
@@ -38,6 +38,7 @@ def auto_reorder(sender, instance, **kwargs):
         seasonality = random.choice([choice[0] for choice in Item.SEASONALITY])
         state = random.choice([choice[0] for choice in Item.STATE])
         price = random.uniform(1, 5000)
+        price = round(price, 2)
         Item.objects.create(
             supplier=supplier,
             fabric=fabric,
