@@ -13,10 +13,13 @@
          .container {
             display: flex;
             flex-direction: column;
+
             }
 
           .row {
             display: flex;
+              flex-wrap: wrap;
+              border-radius: 10px;
           }
 
           .col {
@@ -26,10 +29,12 @@
             border: 1px solid #ccc;
             text-align: center;
             margin: 5px;
+              border-radius: 10px;
           }
  .cont {
     width: 100%;
     overflow-x: auto;
+     border-radius: 10px;
     }
     table, td, th {
       border-collapse: collapse;
@@ -49,6 +54,17 @@
     }
     a {
     color: rgb(10, 26, 84);
+        text-decoration: none;
+    }
+    button{
+        border-radius: 10px;
+        border: none;
+        padding: 5px 17px;
+    }
+    input{
+        padding: 5px 17px;
+        border-radius: 10px;
+         border: none;
     }
 
 
@@ -60,13 +76,13 @@
 <header>
 <div class="container">
         <div class="row">
-            <div class="col"style="padding: 0px"><a class="p-2 text-dark" href="{% url 'home' %}"><h1>Речі з історією</h1></a></div>
+            <div class="col"style="padding: 0px"><a class="p-2 text-dark" href="{% url 'home_admin' %}"><h1>Речі з історією</h1><h3 style="text-align: center">СТОРІНКА АДМІНІСТРУВАННЯ</h3></a></div>
         </div>
         <div class="row">
             <div class="col"><a class="p-2 text-dark" href="{% url 'lists_item' %}">Таблиці</a></div>
             <div class="col"><a class="p-2 text-dark" href="{% url 'edit_request' %}">Редактор запитів</a></div>
-            <div class="col"><a class="p-2 text-dark" href="{% url 'search_item' %}">Пошук</a></div>
-            <div class="col"><a class="p-2 text-dark" href="{% url 'filtration_item' %}">Фільтрація</a></div>
+            <div class="col"><a class="p-2 text-dark" href="{% url 'choose_a_company' %}">Договори про співробітництво</a></div>
+            <div class="col"><a class="p-2 text-dark" href="{% url 'choose_a_receipt' %}">Документи(чеки) про покупку товару</a></div>
             <div class="col"><a class="p-2 text-dark" href="{% url 'statistics' %}">Статистика і звіти</a></div>
         </div>
   </div>

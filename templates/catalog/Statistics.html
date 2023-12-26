@@ -5,55 +5,98 @@
 {% endblock %}
 
 {% block extra_css %}
+.button-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  h2 {
+    text-align: center;
+  }
+    button{
+padding: 10px 20px;
+    margin: 10px 5px;
+}
+.info-container {
+    text-align: center;
+     width: 100%;
+    display: none;
+}
+li {
+    list-style-type: none;
+   }
 {% endblock %}
-{% block body %}
-<h2>Звіти</h2>
-<ul>
-    <li><a href="{% url 'choose_a_company' %}">Звіт 1 - договір про співробітництво(партнерство)</a></li>
-    <li><a href="{% url 'choose_a_receipt' %}">Звіт 2 - документ(чек) про покупку товару</a></li>
-</ul>
-<h2>Статистика </h2>
 
+{% block body %}
+<h2>Статистика </h2>
+<div class="button-container">
+<button class="button" onclick="showInfo('info1')">Середня ціна речей кожного бренду</button>
+<button class="button" onclick="showInfo('info2')">Кількість речей кожного бренду</button>
+<button class="button" onclick="showInfo('info3')">Кількість речей за кожним постачальником</button>
+<button class="button" onclick="showInfo('info4')">Середня ціна речей кожного постачальника</button>
+<button class="button" onclick="showInfo('info5')">Постачальник та кількість поставок</button>
+<button class="button" onclick="showInfo('info6')">Чеки за минулий тиждень та їх сума</button>
+<button class="button" onclick="showInfo('info7')">Середня ціна товару за тканинами</button></div>
+
+<div id="info1" class="info-container">
 <h3>Середня ціна речей кожного бренду</h3>
 <ul>
 {% for item in average_price_per_brand %}
     <li>{{ item.brand }}: {{ item.average_price|floatformat:2 }} грн</li>
 {% endfor %}
 </ul>
-<h3>Кількість речей кожного бренду</h3>
+    </div>
+<div id="info2" class="info-container"><h3>Кількість речей кожного бренду</h3>
 <ul>
 {% for item in count_per_brand %}
     <li>{{ item.brand }}: {{ item.count }}</li>
 {% endfor %}
-</ul>
-<h3>Кількість речей за кожним постачальником</h3>
+</ul></div>
+<div id="info3" class="info-container"><h3>Кількість речей за кожним постачальником</h3>
 <ul>
 {% for supplier in count_per_supplier %}
     <li>{{ supplier.supplier__company_name }}: {{ supplier.count }}</li>
 {% endfor %}
-</ul>
-<h3>Середня ціна речей кожного постачальника</h3>
+</ul></div>
+<div id="info4" class="info-container"><h3>Середня ціна речей кожного постачальника</h3>
 <ul>
 {% for supplier in average_price_per_supplier %}
     <li>{{ supplier.supplier__company_name }}: {{ supplier.average_price|floatformat:2 }} грн</li>
 {% endfor %}
-</ul>
-<h3>Поставки: </h3>
+</ul></div>
+<div id="info5" class="info-container"><h3>Поставки: </h3>
 <ul>
 <li>Постачальник з найбільшою кількістю поставок: {% for supplier in most_deliveries_suppliers %} {{ supplier.supplier__company_name }}; {% endfor %}</li><br>
 <li>Постачальник з найменшою кількістю поставок: {% for supplier in least_deliveries_suppliers %} {{ supplier.supplier__company_name }}; {% endfor %}</li><br>
-</ul>
-   <h3>Чеки та їх сума: </h3>
-<ul>
+</ul></div>
+<div id="info6" class="info-container"><h3>Чеки за минулий тиждень: </h3>
+    <ul>
     {% for receipt in receipt_totals %}
     <li>№ {{ receipt.number_of_receipt|stringformat:"07d" }}: {{ receipt.total|floatformat:2  }} грн</li>
 {% endfor %}
-</ul>
-
-<h3>Середня ціна товару за тканинами: </h3>
+</ul></div>
+<div id="info7" class="info-container"><h3>Середня ціна товару за тканинами: </h3>
 <ul>
 {% for fabric in average_price_per_fabric_type %}
     <li>{{ fabric.fabric__fabric_name }}: {{ fabric.average_price|floatformat:2 }} грн</li>
 {% endfor %}
 </ul>
+</div>
+<script>
+  function showInfo(infoId) {
+    var infoContainers = document.querySelectorAll('.info-container');
+    infoContainers.forEach(function(container) {
+      container.style.display = 'none';
+    });
+    var selectedInfo = document.getElementById(infoId);
+    if (selectedInfo) {
+      selectedInfo.style.display = 'block';
+    }
+  }
+</script>
+
 {% endblock %}
+
+
+
+

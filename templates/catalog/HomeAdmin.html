@@ -1,0 +1,22 @@
+{% extends 'catalog/pattern.html' %}
+
+{% block title %}
+Home
+{% endblock %}
+
+{% block extra_css %}
+{% endblock %}
+
+{% block body %}<br><br>
+<div class="container">
+        <div class="row">
+            <div class="col"style="padding: 0; background: rgb(70%, 66%, 72%);border: none;"><a class="p-2 text-dark" href="{% url 'home' %}"><button style="background: rgb(59%, 58%, 86%); font-size: 18px">Завершити сесію</button></a></div>
+        </div>
+</div>
+
+<footer>
+
+</footer>
+
+{% endblock %}
+

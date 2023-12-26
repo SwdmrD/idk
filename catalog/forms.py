@@ -56,12 +56,6 @@ class CustomerForm(ModelForm):
             'customer_date_of_birth': forms.DateInput(attrs={'type': 'date', 'placeholder': 'дд.мм.рррр'}),
         }
 
-    def clean_customer_number_of_house(self):
-        customer_number_of_house = self.cleaned_data.get('customer_number_of_house')
-        if customer_number_of_house and (customer_number_of_house < 1 or customer_number_of_house > 500):
-            raise ValidationError('Введіть номер будинку від 1 до 500')
-        return customer_number_of_house
-
     def clean_customer_date_of_birth(self):
         customer_date_of_birth = self.cleaned_data.get('customer_date_of_birth')
         if customer_date_of_birth:
@@ -102,6 +96,7 @@ class ReceiptForm(ModelForm):
         queryset=Item.objects.exclude(id_item__in=Receipt.objects.values_list('id_item', flat=True)),
         required=False,
     )
+
     class Meta:
         model = Receipt
         fields = "__all__"
@@ -473,7 +468,7 @@ class SortByCustomer(forms.Form):
         ("customer_credit_card", "Номер кредитної карти")])
 
 
-class SortByIReceipt(forms.Form):
+class SortByReceipt(forms.Form):
     is_reversed = forms.BooleanField(label='Зворотній порядок', required=False)
     sort_by = forms.ChoiceField(label='Сортувати за', choices=[
         ("id_receipt", "ID"),

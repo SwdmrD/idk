@@ -2,9 +2,11 @@ from django.urls import path
 from . import views
 
 
-
 urlpatterns = [
     path('', views.home, name='home'),
+    path('admin_home', views.home_admin, name='home_admin'),
+    path('home/<int:customer_id>', views.home_client, name='home_client'),
+
     path('edit_request', views.edit_request, name='edit_request'),
 
     path('statistics',  views.statistics, name='statistics'),
@@ -19,25 +21,12 @@ urlpatterns = [
     path('customers', views.list_customer, name='lists_customer'),
     path('receipts', views.list_receipt, name='lists_receipt'),
 
-    path('filtration_fabric', views.filters_fabric, name='filtration_fabric'),
-    path('filtration_item', views.filters_item, name='filtration_item'),
-    path('filtration_supplier', views.filters_supplier, name='filtration_supplier'),
-    path('filtration_customers', views.filters_customer, name='filtration_customer'),
-    path('filtration_receipts', views.filters_receipt, name='filtration_receipt'),
-
-    path('search_item/', views.search_item, name='search_item'),
-    path('search_fabric/', views.search_fabric, name='search_fabric'),
-    path('search_supplier/', views.search_supplier, name='search_supplier'),
-    path('search_customer/', views.search_customer, name='search_customer'),
-    path('search_receipt/', views.search_receipt, name='search_receipt'),
-
-
-
     path('items/new', views.CreateItemView.as_view(), name='new_lists'),
     path('edit_item/<int:pk>/', views.UpdateItemView.as_view(), name='edit_item'),
     path('delete_item/<int:pk>/', views.DeleteItemView.as_view(), name='delete_item'),
 
     path('customer/new', views.CreateCustomerView.as_view(), name='new_customer'),
+    path('customer/new_account', views.CreateCustomer2View.as_view(), name='new_customer_account'),
     path('edit_customer/<int:pk>/', views.UpdateCustomerView.as_view(), name='edit_customer'),
     path('delete_customer/<int:pk>/', views.DeleteCustomerView.as_view(), name='delete_customer'),
 

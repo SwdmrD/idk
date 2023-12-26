@@ -35,7 +35,12 @@ passport_validator = RegexValidator(
     message="Номер паспорта не починається з 0 та містить 10 символів",
     code='invalid_passport'
 )
-
+date_regex = r'^(500|[1-4]?[0-9]{1,2})$'
+date_validator = RegexValidator(
+    regex=date_regex,
+    message="Введіть число від 1 до 500.",
+    code='invalid_number'
+)
 
 class Fabric(models.Model):
     DESTINY = (
@@ -132,7 +137,7 @@ class Customer(models.Model):
     customer_middle_name = models.CharField('По-батькові', validators=[name_validator], max_length=30)
     customer_city = models.CharField('Місто', validators=[name_validator], max_length=30)
     customer_address = models.CharField('Вулиця', validators=[name_validator], max_length=30)
-    customer_number_of_house = models.IntegerField('Номер будинку')
+    customer_number_of_house = models.IntegerField('Номер будинку', validators=[date_validator])
     customer_phone_number = models.CharField('Телефон', validators=[phone_validator], max_length=17)
     customer_email = models.EmailField('Пошта', unique=True, max_length=100)
     customer_passport_code = models.IntegerField('Код паспорту', unique=True, validators=[passport_validator])
@@ -217,7 +222,7 @@ class Item(models.Model):
     id_item = models.AutoField(primary_key=True)
     supplier = models.ForeignKey(Supplier, on_delete=models.SET_NULL, null=True, verbose_name='Постачальник')
     fabric = models.ForeignKey(Fabric, on_delete=models.SET_NULL, null=True, verbose_name='Тканина')
-    type = models.CharField('Тип', max_length=30)
+    type = models.CharField('Тип',validators=[name_validator], max_length=30)
     brand = models.CharField('Бренд', max_length=30)
     size = models.CharField('Розмір', max_length=30,choices=SIZE)
     gender = models.CharField('Приналежність', max_length=30, choices=GENDER)
