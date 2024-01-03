@@ -1,0 +1,94 @@
+{% extends 'catalog/users_page/pattern_client.html' %}
+
+{% block title %}
+Profile
+{% endblock %}
+{% block extra_css %}
+ul {
+    list-style:none;
+}
+{% endblock %}
+{% block body %}
+
+<div class="container">
+     <div class="row">
+          <div class="col" style="padding: 0px; text-align: start; font-size: 18px;">
+              <h3 style="text-align: center">Товари</h3>
+</div>
+</div>
+</div>
+
+<form method="get" action="{% url 'lists_item' %}">
+    <input type="text" name="q" placeholder="Ваш запит" style="width: 300px; height: 20px; font-size: 14px; margin-right: 5px;">
+    <button type="submit" style="font-size: 16px;">Пошук</button>
+</form>
+<div><form method="POST">
+        {% csrf_token %} {{ sort_form.as_p }}
+<input type="submit" value="Сортувати"/></form></div>
+
+<div class="cont">
+    <div class="row">
+        <div class="col" style="text-align: start; margin: 10px; padding: 10px; width: 250px; flex: none">
+            <a class="p-2 text-dark">
+                <form method="get" action="{% url 'lists_item' %}">
+                    {% csrf_token %}
+                    {{ form.as_p }}
+                    <button type="submit">Фільтрувати</button>
+                </form>
+            </a>
+        </div>
+        <div class="col" style="text-align: start; margin: 10px; padding: 10px; width: 10%;">
+            <a class="p-2 text-dark">
+                <div class="cont">
+<table>
+    <thead>
+        <tr>
+             <th>ID</th>
+             <th>Тип</th>
+             <th>Бренд</th>
+             <th>Розмір</th>
+             <th>Приналежність</th>
+             <th>Колір</th>
+             <th>Тканина</th>
+             <th>Хімічна обробка</th>
+             <th>Стан</th>
+             <th>Сезонність</th>
+             <th>Ціна</th>
+             <th>Ціна зі знижкою</th>
+             <th>Постачальник</th>
+             <th>Дії</th>
+        </tr>
+    </thead>
+    <tbody>
+    {% if items %}
+        {% for item in items %}
+        <tr>
+            <td>{{ item.id_item }}</td>
+            <td>{{ item.type }}</td>
+            <td>{{ item.brand }}</td>
+            <td>{{ item.get_size_display }}</td>
+            <td>{{ item.get_gender_display }}</td>
+            <td>{{ item.get_color_display }}</td>
+            <td>{{ item.fabric }}</td>
+            <td>{{ item.get_chemical_treatment_display }}</td>
+            <td>{{ item.get_state_display }}</td>
+            <td>{{ item.get_seasonality_display }}</td>
+            <td>{{ item.price }} грн</td>
+            <td>{{ item.discounted_price }} грн</td>
+            <td>{{ item.supplier }}</td>
+
+            <td><a href="{% url 'purchase' customer.pk item.pk %}">Прибдати</a>
+            </td>
+        </tr>
+        {% endfor %}
+    {% endif %}
+         </tbody>
+    </table>
+
+</div>
+            </a>
+        </div></div></div>
+
+
+
+{% endblock %}

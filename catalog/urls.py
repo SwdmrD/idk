@@ -5,7 +5,12 @@ from . import views
 urlpatterns = [
     path('', views.home, name='home'),
     path('admin_home', views.home_admin, name='home_admin'),
-    path('home/<int:customer_id>', views.home_client, name='home_client'),
+    path('home/<int:pk>', views.home_client, name='home_client'),
+    path('login/', views.login_cust, name='login'),
+
+    path('my_purchases/<int:pk>', views.my_purchases, name='my_purchases'),
+    path('goods/<int:pk>', views.goods, name='goods'),
+    path('purchase/<int:customer_pk>/<int:item_pk>/', views.purchase, name='purchase'),
 
     path('edit_request', views.edit_request, name='edit_request'),
 
@@ -28,6 +33,7 @@ urlpatterns = [
     path('customer/new', views.CreateCustomerView.as_view(), name='new_customer'),
     path('customer/new_account', views.CreateCustomer2View.as_view(), name='new_customer_account'),
     path('edit_customer/<int:pk>/', views.UpdateCustomerView.as_view(), name='edit_customer'),
+    path('edit_my_profile/<int:pk>/', views.UpdateCustomer2View.as_view(), name='edit_my_profile'),
     path('delete_customer/<int:pk>/', views.DeleteCustomerView.as_view(), name='delete_customer'),
 
     path('fabric/new', views.CreateFabricView.as_view(), name='new_fabric'),

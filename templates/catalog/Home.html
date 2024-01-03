@@ -13,6 +13,7 @@
          .container {
             display: flex;
             flex-direction: column;
+            color: rgb(10, 26, 84);
 
             }
 
@@ -61,11 +62,13 @@
         border: none;
         padding: 5px 17px;
         background: rgb(59%, 58%, 86%);
+        font-size: 18px;
     }
     input{
         padding: 5px 17px;
         border-radius: 10px;
          border: none;
+        font-size: 18px;
     }
 
     #forms{
@@ -85,29 +88,17 @@
         </div>
         <div class="row">
 
-            <div class="col"><button onclick="showInfo('info1')" >Авторизуватися</button></div>
-            <div class="col"><button onclick="reg()">Зарєєструватися</button></div>
-            <div class="col"><button onclick="showInfo('info2')" style="background: rgb(177,176,211);">Авторизуватися як робітник</button></div>
+            <div class="col"><button onclick="login()" >Авторизуватися</button></div>
         </div>
+    <div class="row"> <div class="col"><button onclick="reg()">Зарєєструватися</button></div></div>
+     <div class="row"> <div class="col"><button onclick="showInfo('info1')" style="background: rgb(177,176,211);">Авторизуватися як робітник</button></div></div>
   </div>
 </header>
 <hr>
 
 <div id="info1" class="info-container">
 <div class="col">
-<form method="post">{% csrf_token %}
-    {{ form.as_p }}
-    <input type="submit" value="Зберегти">
-       <a href="{% url 'home' %}">
-    <button type="button">Повернутись до списку</button></a>
-</form>
-</div>
-</div>
-
-
-<div id="info2" class="info-container">
-<div class="col">
- <form id="myForm" method="post" onsubmit="return checkValue()"><br>Пароль:
+ <form id="myForm" method="post" onsubmit="return checkValue()" style="font-size: 18px;"><br>Пароль:
     <input type="text" id="password"><br><br>
       <button type="button" onclick="hide()" style="background: #bfbfbf;" >Скасувати дію</button>
     <input type="submit" value="Уввійти" style="background: rgb(59%, 58%, 86%);">
@@ -119,6 +110,9 @@
 <script>
     function reg(){
         window.location.href = "{% url 'new_customer_account' %}";
+    }
+    function login(){
+        window.location.href = "{% url 'login' %}";
     }
     function hide(){
        var infoContainers = document.querySelectorAll('.info-container');

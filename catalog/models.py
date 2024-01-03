@@ -1,6 +1,7 @@
 from django.db import models
 from django.core.validators import RegexValidator
 import random
+from datetime import datetime
 
 
 name_regex = r'^[А-ЩЬЮЯҐЄІЇа-щьюяґєії\'\s]+$'
@@ -17,12 +18,13 @@ phone_validator = RegexValidator(
     code='invalid_phone_number'
 )
 
-password_regex = r"^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&+])[A-Za-z\d@$!%*#?&+]{8,}$"
+password_regex = r"^(?=.*[A-Za-z])(?=.*\d)(?=.*[$!%*#?&+])[A-Za-z\d@$!%*#?&+]{8,}$"
 password_validator = RegexValidator(
     regex=password_regex,
-    message="Мінімум вісім символів, одна літера, одна цифра та один спеціальний символ: @ $ ! % * # ? & +",
+    message="Від 8 символів, латинська літера, цифра та спеціальний символ",
     code='invalid_password'
 )
+
 card_regex = r"^\d{4} \d{4} \d{4} \d{4}$"
 card_validator = RegexValidator(
     regex=card_regex,
@@ -263,7 +265,27 @@ class Receipt(models.Model):
 
     def save(self, *args, **kwargs):
         if self.id_item:
-            self.the_item_cost = self.id_item.price
+            month = datetime.now().month
+            season_discounts = {
+                "Зима": ["Літо"],
+                "Весна": ["Осінь"],
+                "Літо": ["Зима"],
+                "Осінь": ["Весна"],
+                "Демісезон": ["Демісезон"]
+            }
+            current_season = "Зима" if month in {12, 1, 2} else \
+                "Весна" if month in {3, 4, 5} else \
+                    "Літо" if month in {6, 7, 8} else \
+                        "Осінь"
+            discount = 0.75
+            demi_discount = 0.9
+            if current_season in {"Літо", "Зима"} and self.id_item.seasonality == "Демісезон":
+                self.the_item_cost = self.id_item.price * demi_discount
+            elif self.id_item.seasonality in season_discounts.get(current_season, []):
+                self.the_item_cost = self.id_item.price * discount
+            else:
+                self.the_item_cost = self.id_item.price
+
         if not self.number_of_receipt:
             matching_receipt = Receipt.objects.filter(
                 id_customer=self.id_customer,
@@ -284,6 +306,4 @@ class Receipt(models.Model):
 
     class Meta:
         app_label = 'catalog'
-
-
 

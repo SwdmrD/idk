@@ -1,0 +1,59 @@
+{% extends 'catalog/users_page/pattern_client.html' %}
+
+{% block title %}
+Profile
+{% endblock %}
+
+{% block extra_css %}
+ul {
+    list-style:none;
+}
+ .cont {
+    width: 100%;
+    overflow-x: auto;
+     border-radius: 10px;
+    }
+{% endblock %}
+{% block body %}
+
+<div class="container">
+     <div class="row">
+          <div class="col" style="padding: 0px; text-align: start; font-size: 18px;width: 100%;
+    overflow-x: auto;">
+              <h3 style="text-align: center">Мої покупки</h3>
+              <hr>
+<table>
+        <thead>
+        <tr>
+            <th>Товар</th>
+            <th>Номер чеку</th>
+            <th>Дата покупки</th>
+            <th>Вартість товару</th>
+            <th>Тип доставки</th>
+            <th>Тип оплати</th>
+        </tr>
+    </thead>
+
+    <tbody>
+    {% if receipt %}
+        {% for receipt in receipt %}
+        <tr>
+            <td>{{ receipt.id_item }}</td>
+            <td>№ {{ receipt.number_of_receipt|stringformat:"07d"  }}</td>
+            <td>{{ receipt.date_of_purchase }}</td>
+            <td>{{ receipt.the_item_cost }} грн</td>
+            <td>{{ receipt.method_of_delivery }}</td>
+            <td>{{ receipt.payment_type }}</td>
+            </td>
+        </tr>
+        {% endfor %}
+    {% endif %}
+       </tbody>
+    </table>
+<br>
+  </div>
+    </div>
+</div>
+
+
+{% endblock %}

@@ -1,12 +1,15 @@
 from .models import Item, Fabric, Supplier, Customer, Receipt
-from django import forms
 from django.forms import ModelForm
 from django.core.exceptions import ValidationError
-from datetime import date, timedelta, datetime
+from datetime import datetime
 import datetime as dt
 import pytz
-import random
-from django.db.models.signals import pre_save
+from django import forms
+
+
+class LoginForm(forms.Form):
+    customer_email = forms.EmailField(label='Email')
+    customer_password = forms.CharField(widget=forms.PasswordInput, label='Password')
 
 
 class ItemForm(ModelForm):
@@ -25,7 +28,6 @@ class ItemForm2(ModelForm):
     class Meta:
         model = Item
         fields = "__all__"
-
 
     def clean_price(self):
         price = self.cleaned_data.get('price')
@@ -115,6 +117,32 @@ class ReceiptForm(ModelForm):
                 raise ValidationError('Дата покупки не може бути більшою за '
                                       'сьогодніщній день та меншою ніж 01.01.2023')
         return date_of_purchase
+
+
+class ReceiptForm3(ModelForm):
+    id_item = forms.ModelChoiceField(
+        queryset=Item.objects.exclude(id_item__in=Receipt.objects.values_list('id_item', flat=True)),
+        required=True,
+        label='Назва обраного товару',
+    )
+
+    class Meta:
+        model = Receipt
+        fields = "__all__"
+        widgets = {
+            'date_of_purchase': forms.HiddenInput(),
+            'the_item_cost': forms.HiddenInput(),
+            'id_customer': forms.HiddenInput(),
+            'number_of_receipt': forms.HiddenInput()
+        }
+
+    def clean_date_of_purchase(self):
+        current_date = dt.datetime.now(pytz.UTC)
+        return current_date
+
+    def __init__(self, *args, **kwargs):
+        super(ReceiptForm3, self).__init__(*args, **kwargs)
+        self.fields['date_of_purchase'].required = False
 
 
 class ReceiptForm2(ModelForm):
@@ -474,6 +502,7 @@ class SortByReceipt(forms.Form):
         ("id_receipt", "ID"),
         ("id_item", "Товар"),
         ("id_customer", "Покупець"),
+        ("number_of_receipt", "Номер чеку"),
         ("date_of_purchase", "Дата покупки"),
         ("the_item_cost", "Вартість"),
         ("method_of_delivery", "Тип доставки"),

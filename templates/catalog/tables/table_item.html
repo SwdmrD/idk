@@ -50,6 +50,7 @@
              <th>Стан</th>
              <th>Сезонність</th>
              <th>Ціна</th>
+             <th>Ціна зі знижкою</th>
              <th>Постачальник</th>
              <th>Дії</th>
         </tr>
@@ -69,6 +70,7 @@
             <td>{{ item.get_state_display }}</td>
             <td>{{ item.get_seasonality_display }}</td>
             <td>{{ item.price }} грн</td>
+            <td>{{ item.discounted_price }} грн</td>
             <td>{{ item.supplier }}</td>
 
             <td><a href="{% url 'edit_item' item.pk %}">Змінити</a>

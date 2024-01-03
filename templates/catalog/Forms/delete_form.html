@@ -1,0 +1,26 @@
+{% extends 'catalog/pattern.html' %}
+{% block extra_css %}
+    form{
+    margin-left: 10px;
+    }
+{% endblock %}
+{% block title %}
+Видалення
+{% endblock %}
+
+{% block body %}
+<form method="post">
+    <p>Ви впевнені, що хочете видалити цей запис?</p>
+    {% csrf_token %}
+    {{ form.as_p }}
+
+    <button type="button" onclick="goBack()" style="background: #bfbfbf;">Повернутись до списку</button>
+    <button type="submit" style="background: rgb(59%, 58%, 86%);" >Видалити</button>
+
+</form>
+<script>
+    function goBack() {
+    window.history.back();
+}
+</script>
+{% endblock %}

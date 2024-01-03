@@ -1,0 +1,41 @@
+{% extends 'catalog/users_page/pattern_client.html' %}
+
+{% block title %}
+Profile
+{% endblock %}
+{% block extra_css %}
+ul {
+    list-style:none;
+}
+{% endblock %}
+{% block body %}
+
+<div class="container">
+     <div class="row">
+          <div class="col" style="padding: 0px; text-align: start; font-size: 18px;">
+              <h3 style="text-align: center">Мій профіль</h3>
+              <hr>
+<ul>
+    <li><b>Ім'я:</b> {{ customer.customer_name }}</li>
+    <li><b>Прізвище:</b>  {{ customer.customer_surname }}</li>
+    <li><b>По-батькові:</b>  {{ customer.customer_middle_name }}</li>
+    <li><b>Місто:</b>  {{ customer.customer_city }}</li>
+    <li><b>Вулиця:</b>  {{ customer.customer_address }}</li>
+    <li><b>Номер будинку:</b>  {{ customer.customer_number_of_house }}</li>
+    <li><b>Телефон:</b>  {{ customer.customer_phone_number }}</li>
+    <li><b>Пошта:</b>  {{ customer.customer_email }}</li>
+    <li><b>Код паспорту:</b>  {{ customer.customer_passport_code }}</li>
+    <li><b>День народження:</b>  {{ customer.customer_date_of_birth }}</li>
+    <li><b>Пароль:</b>  {{ customer.customer_password }}</li>
+    <li><b>Номер кредитної карти:</b>  {{ customer.customer_credit_card }}</li>
+</ul>
+          </div>
+    </div>
+    <div class="row"></div> <div class="col"style="padding: 0px; text-align: start; font-size: 18px; background: #c4afe0">
+         <h2 style="text-align: center"><a href="{% url 'edit_my_profile' customer.pk %}">Змінити інформацію про себе</a></h2>
+
+</div>
+</div>
+
+
+{% endblock %}

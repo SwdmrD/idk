@@ -1,30 +1,24 @@
-import datetime
-from datetime import date, timedelta
-from django.shortcuts import render
-from .models import Item, Fabric, Supplier, Customer, Receipt
-from .forms import (FabricFilterForm, SupplierFilterForm, SupplierForm,
-                    ItemForm, ItemFilterForm, ItemForm2, SortByItem, SortByCustomer, SortByReceipt,
-                    SortBySupplier, SortByFabric, CustomerForm, ReceiptForm, CustomerForm2,
-                    CustomerFilterForm, ReceiptFilterForm, ReceiptForm2)
-from django.db.models import Q, Count, Avg, Sum, Max, Min
-from django.views.generic.edit import UpdateView
-from django.views.generic import CreateView, DeleteView
-from django.db import connection
-from .forms import SQLQueryForm
-from django.db.utils import OperationalError
-from django.http import Http404
-from django.template.loader import get_template
-from .models import Supplier
-from django.http import HttpResponseRedirect
-from django.contrib import messages
-from django.db.models import ProtectedError
-from django.http import HttpResponse
-from django.shortcuts import redirect
 import os
-from datetime import datetime, timedelta
+from datetime import date, timedelta
+
+from django.contrib import messages
+from django.db import connection
+from django.db.models import Avg, Count, Max, Min, Q, Subquery, Sum
+from django.db.utils import OperationalError
+from django.http import Http404, HttpResponse
+from django.shortcuts import get_object_or_404, redirect, render
+from django.template.loader import get_template
+from django.urls import reverse
+from django.views.generic import CreateView, DeleteView
+from django.views.generic.edit import UpdateView
+
+from .forms import *
+from .models import *
+
 os.add_dll_directory(r"C:\\Program Files\\GTK3-Runtime Win64\\bin\\")
 from weasyprint import HTML
-HTML('https://weasyprint.org/').write_pdf('weasyprint-website.pdf')
+
+HTML("https://weasyprint.org/").write_pdf("weasyprint-website.pdf")
 
 
 def home(request):
@@ -35,8 +29,177 @@ def home_admin(request):
     return render(request, 'catalog/HomeAdmin.html')
 
 
-def home_client(request):
-    return render(request, 'catalog/client/HomeClient.html')
+def login_cust(request):
+    form = LoginForm(request.POST or None)
+    if request.method == 'POST':
+        if form.is_valid():
+            customer_email = form.cleaned_data['customer_email']
+            customer_password = form.cleaned_data['customer_password']
+            try:
+                user = Customer.objects.get(customer_email=customer_email)
+                if user.customer_password == customer_password:
+                    pk = user.pk
+                    customer = get_object_or_404(Customer, pk=pk)
+                    return render(request, 'catalog/users_page/home_customer.html', {'customer': customer})
+                else:
+                    messages.error(request, 'Невірний email або пароль')
+            except Customer.DoesNotExist:
+                messages.error(request, 'Невірний email або пароль')
+
+    return render(request, 'catalog/customer_login.html', {'form': form})
+
+
+def home_client(request, pk):
+    customer = get_object_or_404(Customer, pk=pk)
+    return render(request, 'catalog/users_page/home_customer.html', {'customer': customer})
+
+
+def my_purchases(request, pk):
+    customer = get_object_or_404(Customer, pk=pk)
+    receipt = Receipt.objects.filter(id_customer=pk)
+    receipt = receipt.order_by('number_of_receipt')
+    return render(request, 'catalog/users_page/my_purchases.html', {'customer': customer, 'receipt': receipt})
+
+
+def purchase(request, customer_pk, item_pk):
+    customer = get_object_or_404(Customer, pk=customer_pk)
+    item = get_object_or_404(Item, pk=item_pk)
+
+    if request.method == 'POST':
+        form = ReceiptForm3(request.POST)
+        if form.is_valid():
+            new_receipt = form.save(commit=False)
+            new_receipt.id_customer = customer
+            new_receipt.id_item = item
+            new_receipt.save()
+            return redirect('my_purchases', pk=customer.pk)
+    else:
+        form = ReceiptForm3(initial={'id_customer': customer, 'id_item': item})
+
+    return render(request, 'catalog/users_page/purchase.html', {'form': form, 'customer': customer, 'item': item})
+
+
+def goods(request, pk):
+    customer = get_object_or_404(Customer, pk=pk)
+    receipt = Receipt.objects.filter(id_customer=pk)
+    query = request.GET.get('q')
+    words = query.split() if query else []
+    receipt_item_ids = Receipt.objects.values('id_item')
+    items = Item.objects.exclude(id_item__in=Subquery(receipt_item_ids))
+    sort_form = SortByItem(request.POST or None)
+    form = ItemFilterForm(request.GET)
+    q_objects = Q()
+    if words:
+        search = Q()
+        for word in words:
+            search |= (
+                    Q(id_item__iregex=word) |
+                    Q(type__iregex=word) |
+                    Q(brand__iregex=word) |
+                    Q(supplier__company_name__iregex=word) |
+                    Q(fabric__fabric_name__iregex=word) |
+                    Q(size__iregex=word) |
+                    Q(gender__iregex=word) |
+                    Q(color__iregex=word) |
+                    Q(chemical_treatment__iregex=word) |
+                    Q(seasonality__iregex=word) |
+                    Q(state__iregex=word) |
+                    Q(price__iregex=word)
+
+            )
+        q_objects |= search
+    if form.is_valid():
+        brand_values = form.cleaned_data.get('brand', [])
+        size_values = form.cleaned_data.get('size', [])
+        gender_values = form.cleaned_data.get('gender', [])
+        color_values = form.cleaned_data.get('color', [])
+        fabric_values = form.cleaned_data.get('fabric', [])
+        chemical_treatment_values = form.cleaned_data.get('chemical_treatment', [])
+        state_values = form.cleaned_data.get('state', [])
+        seasonality_values = form.cleaned_data.get('seasonality', [])
+        min_price = form.cleaned_data.get('min_price')
+        max_price = form.cleaned_data.get('max_price')
+        supplier_values = form.cleaned_data.get('supplier', [])
+        filters = Q()
+        if brand_values:
+            filters &= Q(brand__in=brand_values)
+        if size_values:
+            filters &= Q(size__in=size_values)
+        if gender_values:
+            filters &= Q(gender__in=gender_values)
+        if color_values:
+            filters &= Q(color__in=color_values)
+        if fabric_values:
+            filters &= Q(fabric__in=fabric_values)
+        if chemical_treatment_values:
+            filters &= Q(chemical_treatment__in=chemical_treatment_values)
+        if state_values:
+            filters &= Q(state__in=state_values)
+        if seasonality_values:
+            filters &= Q(seasonality__in=seasonality_values)
+        if min_price is not None:
+            filters &= Q(price__gte=min_price)
+        if max_price is not None:
+            filters &= Q(price__lte=max_price)
+        if supplier_values:
+            filters &= Q(supplier__in=supplier_values)
+        q_objects &= filters
+    if sort_form.is_valid():
+        is_reversed = sort_form.cleaned_data['is_reversed']
+        if sort_form.cleaned_data['sort_by'] == 'id_item':
+            items = items.order_by(f'{"-" if is_reversed else ""}id_item')
+        if sort_form.cleaned_data['sort_by'] == 'type':
+            items = items.order_by(f'{"-" if is_reversed else ""}type')
+        if sort_form.cleaned_data['sort_by'] == 'brand':
+            items = items.order_by(f'{"-" if is_reversed else ""}brand')
+        if sort_form.cleaned_data['sort_by'] == 'size':
+            items = items.order_by(f'{"-" if is_reversed else ""}size')
+        if sort_form.cleaned_data['sort_by'] == 'gender':
+            items = items.order_by(f'{"-" if is_reversed else ""}gender')
+        if sort_form.cleaned_data['sort_by'] == 'color':
+            items = items.order_by(f'{"-" if is_reversed else ""}color')
+        if sort_form.cleaned_data['sort_by'] == 'fabric':
+            items = items.order_by(f'{"-" if is_reversed else ""}fabric')
+        if sort_form.cleaned_data['sort_by'] == 'chemical_treatment':
+            items = items.order_by(f'{"-" if is_reversed else ""}chemical_treatment')
+        if sort_form.cleaned_data['sort_by'] == 'state':
+            items = items.order_by(f'{"-" if is_reversed else ""}state')
+        if sort_form.cleaned_data['sort_by'] == 'seasonality':
+            items = items.order_by(f'{"-" if is_reversed else ""}seasonality')
+        if sort_form.cleaned_data['sort_by'] == 'price':
+            items = items.order_by(f'{"-" if is_reversed else ""}price')
+        if sort_form.cleaned_data['sort_by'] == 'supplier':
+            items = items.order_by(f'{"-" if is_reversed else ""}supplier')
+    items = items.filter(q_objects)
+    month = datetime.now().month
+    season_discounts = {
+        "Зима": ["Літо"],
+        "Весна": ["Осінь"],
+        "Літо": ["Зима"],
+        "Осінь": ["Весна"],
+        "Демісезон": ["Демісезон"]
+    }
+    current_season = "Зима" if month in {12, 1, 2} else \
+        "Весна" if month in {3, 4, 5} else \
+            "Літо" if month in {6, 7, 8} else \
+                "Осінь"
+    discount = 0.75
+    demi_discount = 0.9
+    for item in items:
+        if current_season in {"Літо", "Зима"} and item.seasonality == "Демісезон":
+            item.discounted_price = item.price * demi_discount
+        elif item.seasonality in season_discounts.get(current_season, []):
+            item.discounted_price = item.price * discount
+        else:
+            item.discounted_price = item.price
+
+    context = {'items': items,
+               'sort_form': sort_form,
+               'customer': customer,
+               'receipt': receipt,
+               'form': form,
+               'words': words}
+    return render(request, 'catalog/users_page/goods.html', context)
 
 
 def edit_request(request):
@@ -128,7 +291,7 @@ def list_item(request):
             filters &= Q(supplier__in=supplier_values)
         q_objects &= filters
     if sort_form.is_valid():
-        is_reversed = form.cleaned_data['is_reversed']
+        is_reversed = sort_form.cleaned_data['is_reversed']
         if sort_form.cleaned_data['sort_by'] == 'id_item':
             items = items.order_by(f'{"-" if is_reversed else ""}id_item')
         if sort_form.cleaned_data['sort_by'] == 'type':
@@ -154,6 +317,27 @@ def list_item(request):
         if sort_form.cleaned_data['sort_by'] == 'supplier':
             items = items.order_by(f'{"-" if is_reversed else ""}supplier')
     items = items.filter(q_objects)
+    month = datetime.now().month
+    season_discounts = {
+        "Зима": ["Літо"],
+        "Весна": ["Осінь"],
+        "Літо": ["Зима"],
+        "Осінь": ["Весна"],
+        "Демісезон": ["Демісезон"]
+    }
+    current_season = "Зима" if month in {12, 1, 2} else \
+        "Весна" if month in {3, 4, 5} else \
+            "Літо" if month in {6, 7, 8} else \
+                "Осінь"
+    discount = 0.75
+    demi_discount = 0.9
+    for item in items:
+        if current_season in {"Літо", "Зима"} and item.seasonality == "Демісезон":
+            item.discounted_price = item.price * demi_discount
+        elif item.seasonality in season_discounts.get(current_season, []):
+            item.discounted_price = item.price * discount
+        else:
+            item.discounted_price = item.price
     context = {'items': items,
                'sort_form': sort_form,
                'form': form,
@@ -450,6 +634,8 @@ def list_receipt(request):
             receipts = receipts.order_by(f'{"-" if is_reversed else ""}id_item')
         if sort_form.cleaned_data['sort_by'] == 'id_customer':
             receipts = receipts.order_by(f'{"-" if is_reversed else ""}id_customer')
+        if sort_form.cleaned_data['sort_by'] == 'number_of_receipt':
+            receipts = receipts.order_by(f'{"-" if is_reversed else ""}number_of_receipt')
         if sort_form.cleaned_data['sort_by'] == 'date_of_purchase':
             receipts = receipts.order_by(f'{"-" if is_reversed else ""}date_of_purchase')
         if sort_form.cleaned_data['sort_by'] == 'the_item_cost':
@@ -661,105 +847,117 @@ def generate_r(request, receipt_id):
 
 class CreateItemView(CreateView):
     model = Item
-    template_name = "catalog/FormsItem/add_form.html"
+    template_name = "catalog/Forms/add_form.html"
     form_class = ItemForm
     success_url = "/items"
 
 
 class UpdateItemView(UpdateView):
     model = Item
-    template_name = "catalog/FormsItem/editor_form.html"
+    template_name = "catalog/Forms/editor_form.html"
     form_class = ItemForm2
     success_url = "/items"
 
 
 class DeleteItemView(DeleteView):
     model = Item
-    template_name = "catalog/FormsItem/delete_form.html"
+    template_name = "catalog/Forms/delete_form.html"
     success_url = "/items"
 
 
 class CreateCustomerView(CreateView):
     model = Customer
-    template_name = "catalog/FormsCustomer/add_form.html"
+    template_name = "catalog/Forms/add_form.html"
     form_class = CustomerForm
     success_url = "/customers"
 
 
 class CreateCustomer2View(CreateView):
     model = Customer
-    template_name = "catalog/FormsCustomer/add_account.html"
+    template_name = "catalog/Forms/add_account.html"
     form_class = CustomerForm
-    success_url = "/customers"
 
+    def get_success_url(self):
+        return reverse('home_client', args=[str(self.object.pk)])
 
 
 class UpdateCustomerView(UpdateView):
     model = Customer
-    template_name = "catalog/FormsCustomer/editor_form.html"
+    template_name = "catalog/Forms/editor_form.html"
     form_class = CustomerForm2
     success_url = "/customers"
 
 
+class UpdateCustomer2View(UpdateView):
+    model = Customer
+    template_name = "catalog/users_page/edit_info.html"
+    form_class = CustomerForm2
+
+    def get_success_url(self):
+        return reverse('home_client', args=[str(self.object.pk)])
+
+
 class DeleteCustomerView(DeleteView):
     model = Customer
-    template_name = "catalog/FormsCustomer/delete_form.html"
+    template_name = "catalog/Forms/delete_form.html"
     success_url = "/customers"
 
 
 class CreateFabricView(CreateView):  # тканина
     model = Fabric
-    template_name = "catalog/FormsFabric/add_form.html"
+    template_name = "catalog/Forms/add_form.html"
     fields = "__all__"
     success_url = "/fabrics"
 
 
 class UpdateFabricView(UpdateView):
     model = Fabric
-    template_name = "catalog/FormsFabric/editor_form.html"
+    template_name = "catalog/Forms/editor_form.html"
     fields = "__all__"
     success_url = "/fabrics"
 
 
 class DeleteFabricView(DeleteView):
     model = Fabric
-    template_name = "catalog/FormsFabric/delete_form.html"
+    template_name = "catalog/Forms/delete_form.html"
     success_url = "/fabrics"
+
+
 class CreateSupplierView(CreateView):  # постачальник
     model = Supplier
-    template_name = "catalog/FormsSupplier/add_form.html"
+    template_name = "catalog/Forms/add_form.html"
     form_class = SupplierForm
     success_url = "/suppliers"
 
 
 class UpdateSupplierView(UpdateView):
     model = Supplier
-    template_name = "catalog/FormsSupplier/editor_form.html"
+    template_name = "catalog/Forms/editor_form.html"
     form_class = SupplierForm
     success_url = "/suppliers"
 
 
 class DeleteSupplierView(DeleteView):
     model = Supplier
-    template_name = "catalog/FormsSupplier/delete_form.html"
+    template_name = "catalog/Forms/delete_form.html"
     success_url = "/suppliers"
 
 
 class CreateReceiptView(CreateView):  # Чеки
     model = Receipt
-    template_name = "catalog/FormsReceipt/add_form.html"
+    template_name = "catalog/Forms/add_form.html"
     form_class = ReceiptForm
     success_url = "/receipts"
 
 
 class UpdateReceiptView(UpdateView):
     model = Receipt
-    template_name = "catalog/FormsReceipt/editor_form.html"
+    template_name = "catalog/Forms/editor_form.html"
     form_class = ReceiptForm2
     success_url = "/receipts"
 
 
 class DeleteReceiptView(DeleteView):
     model = Receipt
-    template_name = "catalog/FormsReceipt/delete_form.html"
+    template_name = "catalog/Forms/delete_form.html"
     success_url = "/receipts"

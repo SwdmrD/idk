@@ -1,0 +1,43 @@
+{% extends 'catalog/users_page/pattern_client.html' %}
+
+{% block title %}
+Profile
+{% endblock %}
+{% block extra_css %}
+.cont{
+font-size: 20px;
+}
+ul {
+    list-style:none;
+}
+{% endblock %}
+{% block body %}
+
+<div class="container">
+     <div class="row">
+          <div class="col" style="padding: 0px; text-align: start; font-size: 18px;">
+              <h3 style="text-align: center">Товари</h3>
+</div>
+</div>
+</div>
+<div class="cont">
+    <div class="row">
+        <div class="col">
+            <a class="p-2 text-dark">
+<form method="post" style="font-size: 20px">{% csrf_token %}
+    {{ form.as_p }}
+      <a href="{% url 'goods' customer.pk %}">
+    <button type="button" style="background: #bfbfbf;">Повернутись до обирання товару</button></a>
+    <input type="submit"  style="background: rgb(59%, 58%, 86%);" value="Зберегти">
+
+</form>
+
+
+            </a>
+        </div>
+    </div>
+</div>
+
+
+
+{% endblock %}

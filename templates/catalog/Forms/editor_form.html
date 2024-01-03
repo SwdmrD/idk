@@ -1,0 +1,25 @@
+{% extends 'catalog/pattern.html' %}
+{% block extra_css %}
+    form{
+    margin-left: 10px
+    }
+{% endblock %}
+{% block title %}
+Edit State
+{% endblock %}
+
+{% block body %}
+<form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="button" onclick="goBack()" style="background: #bfbfbf;">Повернутись до списку</button>
+    <button type="submit" style="background: rgb(59%, 58%, 86%);" >Зберегти зміни</button>
+
+
+</form>
+<script>
+    function goBack() {
+    window.history.back();
+}
+</script>
+{% endblock %}
