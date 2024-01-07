@@ -14,7 +14,6 @@ from django.views.generic.edit import UpdateView
 
 from .forms import *
 from .models import *
-
 os.add_dll_directory(r"C:\\Program Files\\GTK3-Runtime Win64\\bin\\")
 from weasyprint import HTML
 
@@ -652,96 +651,6 @@ def list_receipt(request):
     return render(request, 'catalog/tables/table_receipt.html', context)
 
 
-def search_item(request):
-    query = request.GET.get('q')
-    words = query.split() if query else []
-    items = Item.objects.all()
-    sort_form = SortByItem(request.POST or None)
-    form = ItemFilterForm(request.GET)
-    q_objects = Q()
-    if words:
-        search = Q()
-        for word in words:
-            search |= (
-                    Q(id_item__iregex=word) |
-                    Q(type__iregex=word) |
-                    Q(brand__iregex=word) |
-                    Q(size__iregex=word) |
-                    Q(gender__iregex=word) |
-                    Q(color__iregex=word) |
-                    Q(fabric__iregex=word) |
-                    Q(chemical_treatment__iregex=word) |
-                    Q(state__iregex=word) |
-                    Q(seasonality__iregex=word) |
-                    Q(price__iregex=word) |
-                    Q(supplier__iregex=word)
-            )
-        q_objects |= search
-    if form.is_valid():
-        brand_values = form.cleaned_data.get('brand', [])
-        size_values = form.cleaned_data.get('size', [])
-        gender_values = form.cleaned_data.get('gender', [])
-        color_values = form.cleaned_data.get('color', [])
-        fabric_values = form.cleaned_data.get('fabric', [])
-        chemical_treatment_values = form.cleaned_data.get('chemical_treatment', [])
-        state_values = form.cleaned_data.get('state', [])
-        seasonality_values = form.cleaned_data.get('seasonality', [])
-        min_price = form.cleaned_data.get('min_price')
-        max_price = form.cleaned_data.get('max_price')
-        supplier_values = form.cleaned_data.get('supplier', [])
-        filters = Q()
-        if brand_values:
-            filters &= Q(brand__in=brand_values)
-        if size_values:
-            filters &= Q(size__in=size_values)
-        if gender_values:
-            filters &= Q(gender__in=gender_values)
-        if color_values:
-            filters &= Q(color__in=color_values)
-        if fabric_values:
-            filters &= Q(fabric__in=fabric_values)
-        if chemical_treatment_values:
-            filters &= Q(chemical_treatment__in=chemical_treatment_values)
-        if state_values:
-            filters &= Q(state__in=state_values)
-        if seasonality_values:
-            filters &= Q(seasonality__in=seasonality_values)
-        if min_price is not None:
-            filters &= Q(price__gte=min_price)
-        if max_price is not None:
-            filters &= Q(price__lte=max_price)
-        if supplier_values:
-            filters &= Q(supplier__in=supplier_values)
-        q_objects &= filters
-    if sort_form.is_valid():
-        is_reversed = sort_form.cleaned_data['is_reversed']
-
-
-
-    query = request.GET.get('q')
-    words = query.split() if query else []
-    items = Item.objects.all()
-    if request.method == 'GET' and words:
-        for word in words:
-            q_objects = (
-                    Q(id_item__iregex=word) |
-                    Q(type__iregex=word) |
-                    Q(brand__iregex=word) |
-                    Q(supplier__company_name__iregex=word) |
-                    Q(fabric__fabric_name__iregex=word) |
-                    Q(size__iregex=word) |
-                    Q(gender__iregex=word) |
-                    Q(color__iregex=word) |
-                    Q(chemical_treatment__iregex=word) |
-                    Q(seasonality__iregex=word) |
-                    Q(state__iregex=word) |
-                    Q(price__iregex=word)
-            )
-            items = items.filter(q_objects)
-    words = ' '.join(words)
-    return render(request, 'catalog/search/search_item.html', {'items': items, 'word':words})
-
-
 def statistics(request):
     # Середня ціна речей кожного бренду
     average_price_per_brand = Item.objects.values('brand').annotate(average_price=Avg('price'))
@@ -793,10 +702,10 @@ def choosing(request):
 
 
 def generate_pdf(request, supplier_id):
-    today = (date.today() - timedelta(days = 365)).strftime("%d/%m/%Y")
-    last_date = (date.today() + timedelta(days = 365)).strftime("%d/%m/%Y")
+    today = (date.today() - timedelta(days=365)).strftime("%d/%m/%Y")
+    last_date = (date.today() + timedelta(days=365)).strftime("%d/%m/%Y")
     try:
-        supplier = Supplier.objects.get(pk= supplier_id)
+        supplier = Supplier.objects.get(pk=supplier_id)
     except Supplier.DoesNotExist:
         raise Http404("Supplier does not exist")
     template_path = 'catalog/documents/agreement_template.html'
@@ -824,13 +733,10 @@ def generate_r(request, receipt_id):
     today = (date.today() - timedelta(days=365)).strftime("%d/%m/%Y")
     last_date = (date.today() + timedelta(days=365)).strftime("%d/%m/%Y")
     try:
-        receipt = Receipt.objects.get(pk= receipt_id)
+        receipt = Receipt.objects.get(pk=receipt_id)
         customer = receipt.id_customer
         receipts = Receipt.objects.filter(number_of_receipt=receipt.number_of_receipt)
         items = [receipt.id_item for receipt in receipts]
-        item_ids = [receipt.id_item.id_item for receipt in receipts]
-        item = Item.objects.filter(id_item__in=item_ids)
-        total_cost = sum(item.price for item in item)
         total_cost = sum(item.price for item in items)
     except Receipt.DoesNotExist:
         raise Http404("Receipt does not exist")

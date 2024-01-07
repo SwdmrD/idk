@@ -41,6 +41,9 @@
         <tr>
              <th>ID</th>
              <th>Тип</th>
+             <th>Ціна</th>
+             <th>Ціна зі знижкою</th>
+             <th>Сезонність</th>
              <th>Бренд</th>
              <th>Розмір</th>
              <th>Приналежність</th>
@@ -48,9 +51,6 @@
              <th>Тканина</th>
              <th>Хімічна обробка</th>
              <th>Стан</th>
-             <th>Сезонність</th>
-             <th>Ціна</th>
-             <th>Ціна зі знижкою</th>
              <th>Постачальник</th>
              <th>Дії</th>
         </tr>
@@ -61,6 +61,9 @@
         <tr>
             <td>{{ item.id_item }}</td>
             <td>{{ item.type }}</td>
+            <td>{{ item.price }} грн</td>
+            <td>{{ item.discounted_price }} грн</td>
+            <td>{{ item.get_seasonality_display }}</td>
             <td>{{ item.brand }}</td>
             <td>{{ item.get_size_display }}</td>
             <td>{{ item.get_gender_display }}</td>
@@ -68,9 +71,6 @@
             <td>{{ item.fabric }}</td>
             <td>{{ item.get_chemical_treatment_display }}</td>
             <td>{{ item.get_state_display }}</td>
-            <td>{{ item.get_seasonality_display }}</td>
-            <td>{{ item.price }} грн</td>
-            <td>{{ item.discounted_price }} грн</td>
             <td>{{ item.supplier }}</td>
 
             <td><a href="{% url 'edit_item' item.pk %}">Змінити</a>
